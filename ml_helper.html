@@ -1,0 +1,4386 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Learning Helper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-version {
+            font-size: 0.8rem;
+            color: #00aa00;
+        }
+        .main-content {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+        }
+        .sidebar {
+            width: 300px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        .tab-container {
+            display: flex;
+            border-bottom: 2px solid #667eea;
+            margin-bottom: 10px;
+        }
+        .tab {
+            padding: 8px 15px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .tab:hover {
+            background-color: #e0e0e0;
+        }
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .content-area {
+            flex: 1;
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 10px;
+        }
+        .left-panel {
+            width: 300px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            max-height: calc(100vh - 150px);
+        }
+        .right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .code-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .code-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 5px 10px;
+            border: 1px solid #667eea;
+            border-radius: 5px 5px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        .code-title {
+            font-weight: bold;
+        }
+        .code-content {
+            flex: 1;
+            background-color: #1e1e1e;
+            border: 1px solid #667eea;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            height: 300px;
+            color: #d4d4d4;
+        }
+        .control-bar {
+            display: flex;
+            gap: 10px;
+            padding: 5px;
+            border-top: 1px solid #667eea;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 0 0 5px 5px;
+        }
+        .btn {
+            padding: 5px 10px;
+            border: 1px solid #667eea;
+            border-radius: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #667eea;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            background-color: #f8f8f8;
+        }
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .button-row {
+            display: flex;
+            gap: 5px;
+            margin: 5px 0;
+        }
+        .section {
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px solid #667eea;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #667eea;
+            color: #333;
+        }
+        .dictionary-panel {
+            display: flex;
+            gap: 10px;
+        }
+        .dictionary-list {
+            width: 200px;
+            border: 1px solid #667eea;
+            border-radius: 5px;
+            padding: 5px;
+            background-color: #f8f8f8;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        .dictionary-items {
+            width: 300px;
+            border: 1px solid #667eea;
+            border-radius: 5px;
+            padding: 5px;
+            background-color: #f8f8f8;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        .dictionary-item {
+            padding: 5px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+        .dictionary-item:hover {
+            background-color: #e0e0e0;
+        }
+        .dictionary-item.selected {
+            background-color: #667eea;
+            color: white;
+        }
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-top: 1px solid #ccc;
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+        .footer-btn {
+            padding: 5px 10px;
+            border: 1px solid #667eea;
+            border-radius: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .footer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+        /* Scrollable lists with limited height */
+        .scrollable-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+            }
+            .content-area {
+                flex-direction: column;
+            }
+            .left-panel {
+                width: 100%;
+            }
+            .button-grid {
+                grid-template-columns: 1fr;
+            }
+            .dictionary-panel {
+                flex-direction: column;
+            }
+            .dictionary-list {
+                width: 100%;
+            }
+            .dictionary-items {
+                width: 100%;
+            }
+        }
+        .tab-subcontainer {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #667eea;
+            margin-bottom: 10px;
+        }
+        .tab-content {
+            display: block;
+        }
+        .sub-tab-content {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-title">
+                
+                <span>Machine Learning Helper</span>
+            </div>
+            <div class="header-version">Software: 1.0 </div>
+        </header>
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="tab-container">
+                    <div class="tab active" onclick="switchTab('code-generator')">Code Generator</div>
+                    <div class="tab" onclick="switchTab('code-dictionary')">Code Dictionary</div>
+                    <div class="tab" onclick="switchTab('projects')">Projects</div>
+                </div>
+                <div id="code-generator-tab" class="tab-content">
+                  <div class="tab-subcontainer">
+                      <div class="tab active" onclick="switchSubTab('load')" 
+                     style="margin: 0 5px 0 0; padding: 5px 10px; border: 1px solid #764ba2; border-radius: 5px;">Load</div>
+                        <div class="tab" onclick="switchSubTab('preparing')" style="margin: 0 5px 0 0; padding: 5px 10px; border: 1px solid #764ba2; border-radius: 5px;">Preparing</div>
+                        <div class="tab" onclick="switchSubTab('reg')" style="margin: 0 5px 0 0; padding: 5px 10px; border: 1px solid #764ba2; border-radius: 5px;">Reg.</div>
+                        <div class="tab" onclick="switchSubTab('class')" style="margin: 0 5px 0 0; padding: 5px 10px; border: 1px solid #764ba2; border-radius: 5px;">Class.</div>
+                        <div class="tab" onclick="switchSubTab('unsup')" style="margin: 5px 5px ; padding: 5px 10px; border: 1px solid #764ba2; border-radius: 5px;">Unsup.</div>
+                        <div class="tab" onclick="switchSubTab('check')" style="margin: 5px 5px ; padding: 5px 10px; border: 1px solid #764ba2; border-radius: 5px;">Check</div>
+                        <div class="tab" onclick="switchSubTab('graph')" style="margin: 5px 5px ; padding: 5px 10px; border: 1px solid #764ba2; border-radius: 5px;">Graph</div>
+                        <div class="tab" onclick="switchSubTab('tensorflow')" style="margin: 5px 5px ; padding: 5px 10px; border: 1px solid #764ba2; border-radius: 5px;">TensorFlow</div>
+                        <div class="tab" onclick="switchSubTab('nlp')" style="margin: 5px 5px ; padding: 5px 10px; border: 1px solid #764ba2; border-radius: 5px;">NLP</div>
+                        <div class="tab" onclick="switchSubTab('tkinter')" style="margin: 5px 5px ; padding: 5px 10px; border: 1px solid #764ba2; border-radius: 5px;">Tkinter</div>
+                    </div>
+                    <div id="load-content" class="sub-tab-content">
+                        <div class="section">
+                            <div class="section-title">Open Data</div>
+                            <div class="input-group">
+                                <label>Path:</label>
+                                <div style="display: flex; gap: 5px;">
+                                    <input type="text" id="data-path" placeholder="Enter file path">
+                                    <button class="btn" onclick="browseFile()">...</button>
+                                    <input type="file" id="file-input" style="display: none;" onchange="updateFilePath()">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Skip rows:</label>
+                                <div style="display: flex; gap: 5px;">
+                                    <input type="number" id="skip-rows" min="0" value="0">
+                                    <button class="btn" onclick="loadData()">Open</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <div class="section-title">Saved Data</div>
+                            <div class="button-grid">
+                                <button class="btn" onclick="loadDataset('iris')">Iris</button>
+                                <button class="btn" onclick="loadDataset('boston')">Boston</button>
+                                <button class="btn" onclick="loadDataset('breast')">Breast</button>
+                                <button class="btn" onclick="loadDataset('diabetes')">Diabetes</button>
+                                <button class="btn" onclick="loadDataset('digits')">Digits</button>
+                                <button class="btn" onclick="loadDataset('wine')">Wine</button>
+                                <button class="btn" onclick="loadDataset('reg')">Reg.</button>
+                                <button class="btn" onclick="loadDataset('classf')">Classf.</button>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <div class="section-title">Data Cleaning</div>
+                            <div class="input-group">
+                                <label>Missing Value:</label>
+                                <input type="text" id="missing-value" value="np.nan">
+                            </div>
+                            <div class="input-group">
+                                <label>Strategy:</label>
+                                <select id="cleaning-strategy">
+                                    <option value="mean">mean</option>
+                                    <option value="median">median</option>
+                                    <option value="most_frequent">most_frequent</option>
+                                    <option value="constant">constant</option>
+                                </select>
+                                <button class="btn" onclick="applyCleaning()">Apply</button>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <div class="section-title">Feature Selection</div>
+                            <div class="button-grid">
+                                <button class="btn" onclick="featureSelection('percentile')">Select Percentile</button>
+                                <button class="btn" onclick="featureSelection('univariate')">Generic Univariate</button>
+                                <button class="btn" onclick="featureSelection('kbest')">Select KBest</button>
+                                <button class="btn" onclick="featureSelection('model')">Select From Model</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="preparing-content" class="sub-tab-content" style="display: none;">
+                        <div class="section">
+                            <div class="section-title">Data Preparation</div>
+                            <div class="button-grid">
+                                <button class="btn" onclick="prepareData('scale')">Scale Data</button>
+                                <button class="btn" onclick="prepareData('normalize')">Normalize Data</button>
+                                <button class="btn" onclick="prepareData('encode')">Encode Categorical</button>
+                                <button class="btn" onclick="prepareData('split')">Split Data</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="reg-content" class="sub-tab-content" style="display: none;">
+                        <div class="section">
+                            <div class="section-title">Regression Models</div>
+                            <div class="button-grid">
+                                <button class="btn" onclick="generateModel('linear_regression')">Linear Regression</button>
+                                <button class="btn" onclick="generateModel('ridge')">Ridge Regression</button>
+                                <button class="btn" onclick="generateModel('lasso')">Lasso Regression</button>
+                                <button class="btn" onclick="generateModel('svr')">SVR</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="class-content" class="sub-tab-content" style="display: none;">
+                        <div class="section">
+                            <div class="section-title">Classification Models</div>
+                            <div class="button-grid">
+                                <button class="btn" onclick="generateModel('logistic')">Logistic Regression</button>
+                                <button class="btn" onclick="generateModel('svm')">SVM</button>
+                                <button class="btn" onclick="generateModel('decision_tree')">Decision Tree</button>
+                                <button class="btn" onclick="generateModel('random_forest')">Random Forest</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="unsup-content" class="sub-tab-content" style="display: none;">
+                        <div class="section">
+                            <div class="section-title">Unsupervised Learning</div>
+                            <div class="button-grid">
+                                <button class="btn" onclick="generateModel('kmeans')">K-Means</button>
+                                <button class="btn" onclick="generateModel('hierarchical')">Hierarchical</button>
+                                <button class="btn" onclick="generateModel('dbscan')">DBSCAN</button>
+                                <button class="btn" onclick="generateModel('pca')">PCA</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="check-content" class="sub-tab-content" style="display: none;">
+                        <div class="section">
+                            <div class="section-title">Model Evaluation</div>
+                            <div class="button-grid">
+                                <button class="btn" onclick="generateEvaluation('accuracy')">Accuracy Score</button>
+                                <button class="btn" onclick="generateEvaluation('precision')">Precision Score</button>
+                                <button class="btn" onclick="generateEvaluation('recall')">Recall Score</button>
+                                <button class="btn" onclick="generateEvaluation('f1')">F1 Score</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="graph-content" class="sub-tab-content" style="display: none;">
+                        <div class="section">
+                            <div class="section-title">Graphs & Visualization</div>
+                            <div class="button-grid">
+                                <button class="btn" onclick="generateGraph('line')">Line Plot</button>
+                                <button class="btn" onclick="generateGraph('scatter')">Scatter Plot</button>
+                                <button class="btn" onclick="generateGraph('bar')">Bar Chart</button>
+                                <button class="btn" onclick="generateGraph('hist')">Histogram</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tensorflow-content" class="sub-tab-content" style="display: none;">
+                        <div class="section">
+                            <div class="section-title">TensorFlow Models</div>
+                            <div class="button-grid">
+                                <button class="btn" onclick="generateModel('tf_linear')">Linear Model</button>
+                                <button class="btn" onclick="generateModel('tf_dnn')">DNN Model</button>
+                                <button class="btn" onclick="generateModel('tf_cnn')">CNN Model</button>
+                                <button class="btn" onclick="generateModel('tf_rnn')">RNN Model</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="nlp-content" class="sub-tab-content" style="display: none;">
+                        <div class="section">
+                            <div class="section-title">NLP Models</div>
+                            <div class="button-grid">
+                                <button class="btn" onclick="generateModel('nlp_text')">Text Classification</button>
+                                <button class="btn" onclick="generateModel('nlp_sentiment')">Sentiment Analysis</button>
+                                <button class="btn" onclick="generateModel('nlp_tokenizer')">Tokenizer</button>
+                                <button class="btn" onclick="generateModel('nlp_embedding')">Word Embedding</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tkinter-content" class="sub-tab-content" style="display: none;">
+                        <div class="section">
+                            <div class="section-title">Tkinter GUI</div>
+                            <div class="button-grid">
+                                <button class="btn" onclick="generateGui('basic')">Basic Window</button>
+                                <button class="btn" onclick="generateGui('buttons')">Buttons</button>
+                                <button class="btn" onclick="generateGui('labels')">Labels</button>
+                                <button class="btn" onclick="generateGui('entry')">Entry Fields</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="code-dictionary-tab" class="tab-content" style="display: none;">
+                    <div class="tab-subcontainer">
+                        <div class="tab active" onclick="switchDictionaryTab('dictionary')" style="margin: 0; padding: 5px 10px;">Dictionary</div>
+                        <div class="tab" onclick="switchDictionaryTab('search')" style="margin: 0; padding: 5px 10px;">Search</div>
+                    </div>
+                    <div id="dictionary-content" class="sub-tab-content">
+                        <div class="dictionary-panel">
+                            <div class="dictionary-list">
+                                <div class="dictionary-item" onclick="selectDictionaryItem(this, '00 Important Functions')">00 Important Functions</div>
+                                <div class="dictionary-item" onclick="selectDictionaryItem(this, '01 Numpy')">01 Numpy</div>
+                                <div class="dictionary-item" onclick="selectDictionaryItem(this, '02 Pandas')">02 Pandas</div>
+                                <div class="dictionary-item selected" onclick="selectDictionaryItem(this, '03 Matplotlib')">03 Matplotlib</div>
+                                <div class="dictionary-item" onclick="selectDictionaryItem(this, '04 Sklearn Preprocessing')">04 Sklearn Preprocessing</div>
+                                <div class="dictionary-item" onclick="selectDictionaryItem(this, '05 Sklearn Features')">05 Sklearn Features</div>
+                                <div class="dictionary-item" onclick="selectDictionaryItem(this, '06 Sklearn Models')">06 Sklearn Models</div>
+                                <div class="dictionary-item" onclick="selectDictionaryItem(this, '07 Sklearn Check')">07 Sklearn Check</div>
+                                <div class="dictionary-item" onclick="selectDictionaryItem(this, '08 Seaborn')">08 Seaborn</div>
+                                <div class="dictionary-item" onclick="selectDictionaryItem(this, '09 TensorFlow Tools')">09 TensorFlow Tools</div>
+                                <div class="dictionary-item" onclick="selectDictionaryItem(this, '10 TensorFlow Models')">10 TensorFlow Models</div>
+                                <div class="dictionary-item" onclick="selectDictionaryItem(this, '11 Keras')">11 Keras</div>
+                                
+                            </div>
+                            <div class="dictionary-items" id="dictionary-items-container">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div id="search-content" class="sub-tab-content" style="display: none;">
+                        <div class="section">
+                            <div class="section-title">Search</div>
+                            <div class="input-group">
+                                <input type="text" id="search-input" placeholder="Search for functions...">
+                                <button class="btn" onclick="searchDictionary()">Search</button>
+                            </div>
+                            <div class="dictionary-panel">
+                                <div class="dictionary-list scrollable-list" id="search-results">
+                                    <!-- Search results will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="projects-tab" class="tab-content" style="display: none;">
+                    <div class="section">
+                        <div class="section-title">Projects</div>
+                        <div class="button-grid">
+                            <button class="btn" onclick="loadProject('project1')">Project 1</button>
+                            <button class="btn" onclick="loadProject('project2')">Project 2</button>
+                            <button class="btn" onclick="loadProject('project3')">Project 3</button>
+                            <button class="btn" onclick="loadProject('project4')">Project 4</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-area">
+                <div class="left-panel">
+                    <div id="model-section" class="section">
+                        <div class="section-title">Model Selection</div>
+                        <div class="button-grid">
+                            <button class="btn" onclick="selectModel('ensemble')">Ensemble</button>
+                            <button class="btn" onclick="selectModel('naive_bayes')">Naive Bayes</button>
+                            <button class="btn" onclick="selectModel('linear_model')">Linear Model</button>
+                            <button class="btn" onclick="selectModel('discriminant_analysis')">Discriminant Analysis</button>
+                            <button class="btn" onclick="selectModel('metrics')">Metrics</button>
+                            <button class="btn" onclick="selectModel('validation')">Validation</button>
+                            <button class="btn" onclick="selectModel('other_models')">Other Models </button>
+                        </div>
+                    </div>
+                    <div id="ensemble-section" class="section" style="display: none;">
+                        <div class="section-title">Ensemble</div>
+                        <div class="button-grid">
+                            <button class="btn" onclick="generateModel('random_forest')">Random Forest</button>
+                            <button class="btn" onclick="generateModel('gradient_boosting')">Gradient Boosting</button>
+                            <button class="btn" onclick="generateModel('voting_classifier')">Voting Classifier</button>
+                        </div>
+                    </div>
+                    <div id="naive-bayes-section" class="section" style="display: none;">
+                        <div class="section-title">Naive Bayes</div>
+                        <div class="button-grid">
+                            <button class="btn" onclick="generateModel('gaussian_nb')">Gaussian NB</button>
+                            <button class="btn" onclick="generateModel('multinomial_nb')">Multinomial NB</button>
+                            <button class="btn" onclick="generateModel('bernoulli_nb')">Bernoulli NB</button>
+                        </div>
+                    </div>
+                    <div id="linear-model-section" class="section" style="display: none;">
+                        <div class="section-title">Linear Model</div>
+                        <div class="button-grid">
+                            <button class="btn" onclick="generateModel('logistic_regression')">Logistic Regression</button>
+                            <button class="btn" onclick="generateModel('sgd_classifier')">SGDClassifier</button>
+                        </div>
+                    </div>
+                    <div id="discriminant-analysis-section" class="section" style="display: none;">
+                        <div class="section-title">Discriminant Analysis</div>
+                        <div class="button-grid">
+                            <button class="btn" onclick="generateModel('lda')">LDA</button>
+                            <button class="btn" onclick="generateModel('qda')">QDA</button>
+                        </div>
+                    </div>
+                    <div id="other-models-section" class="section" style="display: none;">
+                        <div class="section-title">Other Models</div>
+                        <div class="button-grid">
+                            <button class="btn" onclick="generateModel('svc')">SVC</button>
+                            <button class="btn" onclick="generateModel('decision_tree')">Decision Tree</button>
+                            <button class="btn" onclick="generateModel('knn')">KNN</button>
+                            <button class="btn" onclick="generateModel('neural_network')">Neural Network</button>
+                        </div>
+                    </div>
+                    <div id="metrics-section" class="section" style="display: none;">
+                        <div class="section-title">Metrics</div>
+                        <div class="button-grid">
+                            <button class="btn" onclick="generateMetric('mae')">Mean Absolute Error</button>
+                            <button class="btn" onclick="generateMetric('mse')">Mean Squared Error</button>
+                            <button class="btn" onclick="generateMetric('medae')">Median Absolute Error</button>
+                            <button class="btn" onclick="generateMetric('confusion_matrix')">Confusion Matrix</button>
+                        </div>
+                    </div>
+                    <div id="validation-section" class="section" style="display: none;">
+                        <div class="section-title">Cross Validation</div>
+                        <div class="button-grid">
+                            <button class="btn" onclick="generateValidation('cross_validate')">Cross Validate</button>
+                            <button class="btn" onclick="generateValidation('cross_validate_predict')">Cross Validate Predict</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-panel">
+                    <div class="code-section">
+                        <div class="code-header">
+                            <div class="code-title">Code</div>
+                        </div>
+                        <div class="code-content" id="code-content">
+                        </div>
+                    </div>
+                    <div class="control-bar">
+                        <button class="btn" onclick="deleteCode()">Delete</button>
+                        <button class="btn" onclick="copyCode()">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <button class="footer-btn" onclick="showAbout()">About</button>
+            <button class="footer-btn" onclick="exitApp()">Exit</button>
+        </div>
+        <div class="notification" id="notification">
+            Code copied to clipboard!
+        </div>
+    </div>
+    <script>
+        // Global variables
+        let currentTab = 'code-generator';
+        let currentSubTab = 'load';
+        let currentDictionaryTab = 'dictionary';
+        let currentModelSection = 'model-selection';
+        let includeDetails = false;
+
+        // Switch between main tabs
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.getElementById('code-generator-tab').style.display = 'none';
+            document.getElementById('code-dictionary-tab').style.display = 'none';
+            document.getElementById('projects-tab').style.display = 'none';
+            
+            document.querySelectorAll('.tab-container .tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Show selected tab content
+            document.getElementById(`${tabName}-tab`).style.display = 'block';
+            // Add active class to selected tab
+            event.target.classList.add('active');
+            currentTab = tabName;
+            // Reset sub-tabs when switching main tabs
+            if (tabName === 'code-generator') {
+                switchSubTab('load');
+            } else if (tabName === 'code-dictionary') {
+                switchDictionaryTab('dictionary');
+            }
+        }
+
+        // Switch between sub-tabs in Code Generator
+        function switchSubTab(subTabName) {
+            // Hide all sub-tab contents
+            const subTabs = ['load', 'preparing', 'reg', 'class', 'unsup', 'check', 'graph', 'tensorflow', 'nlp', 'tkinter'];
+            subTabs.forEach(name => {
+                const element = document.getElementById(`${name}-content`);
+                if (element) {
+                    element.style.display = 'none';
+                }
+            });
+            // Remove active class from all sub-tabs
+            document.querySelectorAll('.tab-subcontainer .tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Show selected sub-tab content
+            const selectedElement = document.getElementById(`${subTabName}-content`);
+            if (selectedElement) {
+                selectedElement.style.display = 'block';
+            }
+            // Add active class to selected sub-tab
+            event.target.classList.add('active');
+            currentSubTab = subTabName;
+            // Update model selection section based on sub-tab
+            updateModelSection(subTabName);
+        }
+
+        // Switch between dictionary tabs
+        function switchDictionaryTab(tabName) {
+            // Hide all dictionary tab contents
+            document.getElementById('dictionary-content').style.display = 'none';
+            document.getElementById('search-content').style.display = 'none';
+            // Remove active class from all dictionary tabs
+            document.querySelectorAll('.tab-subcontainer .tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Show selected dictionary tab content
+            document.getElementById(`${tabName}-content`).style.display = 'block';
+            // Add active class to selected dictionary tab
+            event.target.classList.add('active');
+            currentDictionaryTab = tabName;
+        }
+
+        // Update model selection section based on current sub-tab
+        function updateModelSection(subTabName) {
+            const sections = ['model', 'ensemble', 'naive-bayes', 'linear-model', 'discriminant-analysis', 'other-models', 'metrics', 'validation'];
+            sections.forEach(sec => {
+                const el = document.getElementById(`${sec}-section`);
+                if (el) el.style.display = 'none';
+            });
+            document.getElementById('model-section').style.display = 'block';
+        }
+
+        // Select model section
+        function selectModel(sectionName) {
+            const sections = ['ensemble', 'naive-bayes', 'linear-model', 'discriminant-analysis', 'other-models', 'metrics', 'validation'];
+            sections.forEach(sec => {
+                const el = document.getElementById(`${sec}-section`);
+                if (el) el.style.display = 'none';
+            });
+
+            const map = {
+                ensemble: 'ensemble-section',
+                naive_bayes: 'naive-bayes-section',
+                linear_model: 'linear-model-section',
+                discriminant_analysis: 'discriminant-analysis-section',
+                other_models: 'other-models-section',
+                metrics: 'metrics-section',
+                validation: 'validation-section'
+            };
+            if (map[sectionName]) {
+                document.getElementById(map[sectionName]).style.display = 'block';
+            }
+        }
+
+        // Generate code for selected model
+        function generateModel(modelName) {
+            let code = '';
+            switch(modelName) {
+                case 'linear_regression':
+                    code = `# Import Libraries
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+
+# Load your data (X, y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, shuffel=True)
+
+#Splitted Data
+#print('X_train shape is ' , X_train.shape)
+#print('X_test shape is ' , X_test.shape)
+#print('y_train shape is ' , y_train.shape)
+#print('y_test shape is ' , y_test.shape)
+
+# Initialize and train model
+model = LinearRegression(fit_intercept=True,copy_X=True, n_jobs=-1)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('R² Score:', r2_score(y_test, y_pred))`;
+                    break;
+                case 'ridge':
+                    code = `# Import Libraries
+from sklearn.linear_model import Ridge
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = Ridge(alpha=1.0, random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('R² Score:', r2_score(y_test, y_pred))`;
+                    break;
+                case 'lasso':
+                    code = `# Import Libraries
+from sklearn.linear_model import Lasso
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = Lasso(alpha=1.0, random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('R² Score:', r2_score(y_test, y_pred))`;
+                    break;
+                case 'svr':
+                    code = `# Import Libraries
+from sklearn.svm import SVR
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = SVR(kernel='rbf', C=1.0, gamma='scale')
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('R² Score:', r2_score(y_test, y_pred))`;
+                    break;
+                case 'logistic':
+                    code = `# Import Libraries
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = LogisticRegression(random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('Accuracy:', accuracy_score(y_test, y_pred))
+print('\nClassification Report:\n', classification_report(y_test, y_pred))`;
+                    break;
+                case 'svm':
+                    code = `# Import Libraries
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = SVC(kernel='rbf', C=1.0, gamma='scale', random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('Accuracy:', accuracy_score(y_test, y_pred))
+print('\nClassification Report:\n', classification_report(y_test, y_pred))`;
+                    break;
+                case 'decision_tree':
+                    code = `# Import Libraries
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = DecisionTreeClassifier(max_depth=5, random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('Accuracy:', accuracy_score(y_test, y_pred))
+print('\nClassification Report:\n', classification_report(y_test, y_pred))`;
+                    break;
+                case 'random_forest':
+                    code = `# Import Libraries
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load your data (X, y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42,shuffel=True)
+
+#Splitted Data
+#print('X_train shape is ' , X_train.shape)
+#print('X_test shape is ' , X_test.shape)
+#print('y_train shape is ' , y_train.shape)
+#print('y_test shape is ' , y_test.shape)
+
+# Initialize and train model
+model = RandomForestClassifier(criterion='gini',n_estimators=100, max_depth=2, random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('Accuracy:', accuracy_score(y_test, y_pred))
+print('\nClassification Report:\n', classification_report(y_test, y_pred))`;
+                    break;
+                case 'kmeans':
+                    code = `# Import Libraries
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+
+# Load your data (X)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Initialize and fit model
+kmeans = KMeans(n_clusters=3, random_state=42)
+cluster_labels = kmeans.fit_predict(X_scaled)
+
+print('Cluster labels:', cluster_labels[:10])
+print('Inertia:', kmeans.inertia_)`;
+                    break;
+                case 'hierarchical':
+                    code = `# Import Libraries
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.preprocessing import StandardScaler
+
+# Load your data (X)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Initialize and fit model
+hierarchical = AgglomerativeClustering(n_clusters=3)
+cluster_labels = hierarchical.fit_predict(X_scaled)
+
+print('Cluster labels:', cluster_labels[:10])`;
+                    break;
+                case 'dbscan':
+                    code = `# Import Libraries
+from sklearn.cluster import DBSCAN
+from sklearn.preprocessing import StandardScaler
+
+# Load your data (X)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Initialize and fit model
+dbscan = DBSCAN(eps=0.5, min_samples=5)
+cluster_labels = dbscan.fit_predict(X_scaled)
+
+print('Cluster labels:', cluster_labels[:10])
+print('Number of clusters:', len(set(cluster_labels)) - (1 if -1 in cluster_labels else 0))`;
+                    break;
+                case 'pca':
+                    code = `# Import Libraries
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+
+# Load your data (X)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Initialize and fit PCA
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+print('Explained variance ratio:', pca.explained_variance_ratio_)
+print('Transformed data shape:', X_pca.shape)`;
+                    break;
+                case 'gaussian_nb':
+                    code = `# Import Libraries
+from sklearn.naive_bayes import GaussianNB
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = GaussianNB()
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('Accuracy:', accuracy_score(y_test, y_pred))
+print('\nClassification Report:\n', classification_report(y_test, y_pred))`;
+                    break;
+                case 'multinomial_nb':
+                    code = `# Import Libraries
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics import accuracy_score, classification_report
+
+# For text data
+# vectorizer = TfidfVectorizer()
+# X_vec = vectorizer.fit_transform(texts)
+
+# X_train, X_test, y_train, y_test = train_test_split(X_vec, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = MultinomialNB()
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('Accuracy:', accuracy_score(y_test, y_pred))
+print('\nClassification Report:\n', classification_report(y_test, y_pred))`;
+                    break;
+                case 'bernoulli_nb':
+                    code = `# Import Libraries
+from sklearn.naive_bayes import BernoulliNB
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = BernoulliNB()
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('Accuracy:', accuracy_score(y_test, y_pred))
+print('\nClassification Report:\n', classification_report(y_test, y_pred))`;
+                    break;
+                case 'sgd_classifier':
+                    code = `# Import Libraries
+from sklearn.linear_model import SGDClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = SGDClassifier(loss='hinge', random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('Accuracy:', accuracy_score(y_test, y_pred))
+print('\nClassification Report:\n', classification_report(y_test, y_pred))`;
+                    break;
+                case 'lda':
+                    code = `# Import Libraries
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = LinearDiscriminantAnalysis()
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('Accuracy:', accuracy_score(y_test, y_pred))
+print('\nClassification Report:\n', classification_report(y_test, y_pred))`;
+                    break;
+                case 'qda':
+                    code = `# Import Libraries
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = QuadraticDiscriminantAnalysis()
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('Accuracy:', accuracy_score(y_test, y_pred))
+print('\nClassification Report:\n', classification_report(y_test, y_pred))`;
+                    break;
+                case 'svc':
+                    code = `# Import Libraries
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = SVC(kernel='rbf', C=1.0, gamma='scale', random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('Accuracy:', accuracy_score(y_test, y_pred))
+print('\nClassification Report:\n', classification_report(y_test, y_pred))`;
+                    break;
+                case 'knn':
+                    code = `# Import Libraries
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = KNeighborsClassifier(n_neighbors=5)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('Accuracy:', accuracy_score(y_test, y_pred))
+print('\nClassification Report:\n', classification_report(y_test, y_pred))`;
+                    break;
+                case 'neural_network':
+                    code = `# Import Libraries
+from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = MLPClassifier(hidden_layer_sizes=(100,), max_iter=1000, random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('Accuracy:', accuracy_score(y_test, y_pred))
+print('\nClassification Report:\n', classification_report(y_test, y_pred))`;
+                    break;
+                case 'tf_linear':
+                    code = `# Import Libraries
+import tensorflow as tf
+from sklearn.model_selection import train_test_split
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Build model
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(1, input_shape=(X_train.shape[1],))
+])
+
+# Compile and train
+model.compile(optimizer='adam', loss='mse')
+history = model.fit(X_train, y_train, validation_split=0.2, epochs=100, verbose=0)
+
+# Evaluate
+test_loss = model.evaluate(X_test, y_test, verbose=0)
+print('Test Loss:', test_loss)
+
+# Predict
+y_pred = model.predict(X_test)
+print('Predictions:', y_pred[:5].flatten())`;
+                    break;
+                case 'tf_dnn':
+                    code = `# Import Libraries
+import tensorflow as tf
+from sklearn.model_selection import train_test_split
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Build model
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64, activation='relu', input_shape=(X_train.shape[1],)),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(32, activation='relu'),
+    tf.keras.layers.Dense(1)
+])
+
+# Compile and train
+model.compile(optimizer='adam', loss='mse')
+history = model.fit(X_train, y_train, validation_split=0.2, epochs=100, verbose=0)
+
+# Evaluate
+test_loss = model.evaluate(X_test, y_test, verbose=0)
+print('Test Loss:', test_loss)
+
+# Predict
+y_pred = model.predict(X_test)
+print('Predictions:', y_pred[:5].flatten())`;
+                    break;
+                case 'tf_cnn':
+                    code = `# Import Libraries
+import tensorflow as tf
+from sklearn.model_selection import train_test_split
+
+# Assuming image data (e.g., MNIST)
+# X = X.reshape(-1, 28, 28, 1)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Build model
+model = tf.keras.Sequential([
+    tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(28,28,1)),
+    tf.keras.layers.MaxPooling2D(2,2),
+    tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2,2),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(64, activation='relu'),
+    tf.keras.layers.Dense(10, activation='softmax')
+])
+
+# Compile and train
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+history = model.fit(X_train, y_train, validation_split=0.2, epochs=10, verbose=0)
+
+# Evaluate
+test_loss, test_acc = model.evaluate(X_test, y_test, verbose=0)
+print('Test Accuracy:', test_acc)
+
+# Predict
+y_pred = model.predict(X_test)
+print('Predicted classes:', tf.argmax(y_pred[:5], axis=1).numpy())`;
+                    break;
+                case 'tf_rnn':
+                    code = `# Import Libraries
+import tensorflow as tf
+import numpy as np
+
+# Assuming time series data with shape (samples, timesteps, features)
+# X = X.reshape(-1, timesteps, features)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Build model
+model = tf.keras.Sequential([
+    tf.keras.layers.SimpleRNN(50, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2])),
+    tf.keras.layers.SimpleRNN(50),
+    tf.keras.layers.Dense(1)
+])
+
+# Compile and train
+model.compile(optimizer='adam', loss='mse')
+history = model.fit(X_train, y_train, validation_split=0.2, epochs=100, verbose=0)
+
+# Evaluate
+test_loss = model.evaluate(X_test, y_test, verbose=0)
+print('Test Loss:', test_loss)
+
+# Predict
+y_pred = model.predict(X_test)
+print('Predictions:', y_pred[:5].flatten())`;
+                    break;
+                case 'nlp_text':
+                    code = `# Import Libraries
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Assuming 'texts' and 'labels' are your data
+# X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.2, random_state=42)
+
+# Vectorize text
+vectorizer = TfidfVectorizer(max_features=5000, stop_words='english')
+X_train_vec = vectorizer.fit_transform(X_train)
+X_test_vec = vectorizer.transform(X_test)
+
+# Train model
+model = MultinomialNB()
+model.fit(X_train_vec, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test_vec)
+print('Accuracy:', accuracy_score(y_test, y_pred))
+print('\nClassification Report:\n', classification_report(y_test, y_pred))`;
+                    break;
+                case 'nlp_sentiment':
+                    code = `# Import Libraries
+from textblob import TextBlob
+
+def analyze_sentiment(text):
+    blob = TextBlob(text)
+    polarity = blob.sentiment.polarity
+    if polarity > 0:
+        return "Positive"
+    elif polarity < 0:
+        return "Negative"
+    else:
+        return "Neutral"
+
+# Example usage
+texts = ["I love this product!", "This is terrible.", "It's okay."]
+for text in texts:
+    sentiment = analyze_sentiment(text)
+    print(f"Text: {text}\nSentiment: {sentiment}\n")`;
+                    break;
+                case 'nlp_tokenizer':
+                    code = `# Import Libraries
+from sklearn.feature_extraction.text import CountVectorizer
+
+# Sample texts
+texts = [
+    "This is the first document.",
+    "This document is the second document.",
+    "And this is the third one.",
+    "Is this the first document?"
+]
+
+# Initialize and fit vectorizer
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(texts)
+
+print("Vocabulary:", vectorizer.vocabulary_)
+print("Document-term matrix shape:", X.shape)
+print("First document vector:", X[0].toarray())`;
+                    break;
+                case 'nlp_embedding':
+                    code = `# Import Libraries
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Sample texts
+texts = [
+    "This is the first document.",
+    "This document is the second document.",
+    "And this is the third one.",
+    "Is this the first document?"
+]
+
+# Initialize and fit TF-IDF vectorizer
+tfidf = TfidfVectorizer()
+X = tfidf.fit_transform(texts)
+
+print("Vocabulary size:", len(tfidf.vocabulary_))
+print("TF-IDF matrix shape:", X.shape)
+print("First document TF-IDF vector:", X[0].toarray())`;
+                    break;
+                case 'basic':
+                    code = `# Import Libraries
+import tkinter as tk
+
+# Create main window
+root = tk.Tk()
+root.title("ML Helper GUI")
+root.geometry("400x300")
+root.resizable(True, True)
+
+# Add a label
+label = tk.Label(root, text="Welcome to ML Helper!", font=("Arial", 14))
+label.pack(pady=20)
+
+# Run the application
+root.mainloop()`;
+                    break;
+                case 'buttons':
+                    code = `# Import Libraries
+import tkinter as tk
+from tkinter import messagebox
+
+def on_button_click():
+    messagebox.showinfo("Info", "Button clicked successfully!")
+
+# Create main window
+root = tk.Tk()
+root.title("Button Example")
+root.geometry("300x150")
+
+# Create button
+button = tk.Button(
+    root, 
+    text="Click Me!", 
+    command=on_button_click,
+    bg="#4CAF50",
+    fg="white",
+    font=("Arial", 12),
+    padx=10,
+    pady=5
+)
+button.pack(expand=True)
+
+# Run the application
+root.mainloop()`;
+                    break;
+                case 'labels':
+                    code = `# Import Libraries
+import tkinter as tk
+
+# Create main window
+root = tk.Tk()
+root.title("Label Example")
+root.geometry("400x200")
+
+# Create styled label
+label = tk.Label(
+    root,
+    text="This is a styled label",
+    font=("Helvetica", 16, "bold"),
+    fg="#2c3e50",
+    bg="#ecf0f1",
+    padx=20,
+    pady=10,
+    relief="raised",
+    bd=2
+)
+label.pack(expand=True)
+
+# Run the application
+root.mainloop()`;
+                    break;
+                case 'entry':
+                    code = `# Import Libraries
+import tkinter as tk
+from tkinter import messagebox
+
+def get_entry_text():
+    user_input = entry.get()
+    if user_input:
+        messagebox.showinfo("Input", f"You entered: {user_input}")
+    else:
+        messagebox.showwarning("Warning", "Please enter some text!")
+
+# Create main window
+root = tk.Tk()
+root.title("Entry Field Example")
+root.geometry("350x150")
+
+# Create entry field
+entry = tk.Entry(
+    root,
+    width=30,
+    font=("Arial", 12),
+    justify="center"
+)
+entry.pack(pady=20)
+
+# Create button
+button = tk.Button(
+    root,
+    text="Get Text",
+    command=get_entry_text,
+    bg="#3498db",
+    fg="white",
+    font=("Arial", 10),
+    padx=10
+)
+button.pack()
+
+# Run the application
+root.mainloop()`;
+                    break;
+                default:
+                    code = `# Import Libraries
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# Load your data (X, y)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train model
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print('Accuracy:', accuracy_score(y_test, y_pred))`;
+            }
+            document.getElementById('code-content').textContent = code;
+        }
+
+        // Generate evaluation code
+        function generateEvaluation(evalType) {
+            let code = '';
+            switch(evalType) {
+                case 'accuracy':
+                    code = `# Import Libraries
+from sklearn.metrics import accuracy_score
+
+# Assuming you have y_test and y_pred
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.4f}')`;
+                    break;
+                case 'precision':
+                    code = `# Import Libraries
+from sklearn.metrics import precision_score
+
+# Assuming you have y_test and y_pred
+# For binary classification
+precision = precision_score(y_test, y_pred)
+print(f'Precision: {precision:.4f}')
+
+# For multiclass classification
+precision_macro = precision_score(y_test, y_pred, average='macro')
+precision_micro = precision_score(y_test, y_pred, average='micro')
+print(f'Precision (macro): {precision_macro:.4f}')
+print(f'Precision (micro): {precision_micro:.4f}')`;
+                    break;
+                case 'recall':
+                    code = `# Import Libraries
+from sklearn.metrics import recall_score
+
+# Assuming you have y_test and y_pred
+# For binary classification
+recall = recall_score(y_test, y_pred)
+print(f'Recall: {recall:.4f}')
+
+# For multiclass classification
+recall_macro = recall_score(y_test, y_pred, average='macro')
+recall_micro = recall_score(y_test, y_pred, average='micro')
+print(f'Recall (macro): {recall_macro:.4f}')
+print(f'Recall (micro): {recall_micro:.4f}')`;
+                    break;
+                case 'f1':
+                    code = `# Import Libraries
+from sklearn.metrics import f1_score
+
+# Assuming you have y_test and y_pred
+# For binary classification
+f1 = f1_score(y_test, y_pred)
+print(f'F1 Score: {f1:.4f}')
+
+# For multiclass classification
+f1_macro = f1_score(y_test, y_pred, average='macro')
+f1_micro = f1_score(y_test, y_pred, average='micro')
+print(f'F1 Score (macro): {f1_macro:.4f}')
+print(f'F1 Score (micro): {f1_micro:.4f}')`;
+                    break;
+                default:
+                    code = `# Import Libraries
+from sklearn.metrics import accuracy_score
+
+# Assuming you have y_test and y_pred
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.4f}')`;
+            }
+            document.getElementById('code-content').textContent = code;
+        }
+
+        // Generate graph code
+        function generateGraph(graphType) {
+            let code = '';
+            switch(graphType) {
+                case 'line':
+                    code = `# Import Libraries
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Sample data
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+# Create line plot
+plt.figure(figsize=(10, 6))
+plt.plot(x, y, 'b-', linewidth=2, label='sin(x)')
+plt.title('Line Plot', fontsize=16)
+plt.xlabel('X', fontsize=12)
+plt.ylabel('Y', fontsize=12)
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.show()`;
+                    break;
+                case 'scatter':
+                    code = `# Import Libraries
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Sample data
+np.random.seed(42)
+x = np.random.randn(100)
+y = 2 * x + np.random.randn(100)
+
+# Create scatter plot
+plt.figure(figsize=(10, 6))
+plt.scatter(x, y, alpha=0.7, c='red', s=50)
+plt.title('Scatter Plot', fontsize=16)
+plt.xlabel('X', fontsize=12)
+plt.ylabel('Y', fontsize=12)
+plt.grid(True, alpha=0.3)
+plt.show()`;
+                    break;
+                case 'bar':
+                    code = `# Import Libraries
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Sample data
+categories = ['A', 'B', 'C', 'D', 'E']
+values = [23, 45, 56, 78, 32]
+
+# Create bar chart
+plt.figure(figsize=(10, 6))
+bars = plt.bar(categories, values, color=['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'])
+plt.title('Bar Chart', fontsize=16)
+plt.xlabel('Categories', fontsize=12)
+plt.ylabel('Values', fontsize=12)
+plt.xticks(rotation=45)
+plt.grid(axis='y', alpha=0.3)
+
+# Add value labels on bars
+for bar in bars:
+    height = bar.get_height()
+    plt.text(bar.get_x() + bar.get_width()/2., height,
+             f'{height}', ha='center', va='bottom')
+
+plt.show()`;
+                    break;
+                case 'hist':
+                    code = `# Import Libraries
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Sample data
+np.random.seed(42)
+data = np.random.normal(100, 15, 1000)
+
+# Create histogram
+plt.figure(figsize=(10, 6))
+plt.hist(data, bins=30, alpha=0.7, color='skyblue', edgecolor='black')
+plt.title('Histogram', fontsize=16)
+plt.xlabel('Values', fontsize=12)
+plt.ylabel('Frequency', fontsize=12)
+plt.grid(True, alpha=0.3)
+plt.show()`;
+                    break;
+                default:
+                    code = `# Import Libraries
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Sample data
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+# Create line plot
+plt.figure(figsize=(10, 6))
+plt.plot(x, y, 'b-', linewidth=2, label='sin(x)')
+plt.title('Line Plot', fontsize=16)
+plt.xlabel('X', fontsize=12)
+plt.ylabel('Y', fontsize=12)
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.show()`;
+            }
+            document.getElementById('code-content').textContent = code;
+        }
+
+        // Load dataset
+        function loadDataset(datasetName) {
+            let code = '';
+            switch(datasetName) {
+                case 'iris':
+                    code = `# Import Libraries
+from sklearn.datasets import load_iris
+import pandas as pd
+
+# Load Iris dataset
+iris = load_iris()
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+df['target'] = iris.target
+
+print("Dataset shape:", df.shape)
+print("\nFirst 5 rows:")
+print(df.head())
+print("\nTarget names:", iris.target_names)`;
+                    break;
+                case 'boston':
+                    code = `# Import Libraries
+from sklearn.datasets import fetch_california_housing
+import pandas as pd
+
+# Note: Boston dataset is deprecated due to ethical concerns
+# Using California Housing instead
+housing = fetch_california_housing()
+df = pd.DataFrame(housing.data, columns=housing.feature_names)
+df['target'] = housing.target
+
+print("Dataset shape:", df.shape)
+print("\nFirst 5 rows:")
+print(df.head())`;
+                    break;
+                case 'breast':
+                    code = `# Import Libraries
+from sklearn.datasets import load_breast_cancer
+import pandas as pd
+
+# Load Breast Cancer dataset
+cancer = load_breast_cancer()
+df = pd.DataFrame(cancer.data, columns=cancer.feature_names)
+df['target'] = cancer.target
+
+print("Dataset shape:", df.shape)
+print("\nFirst 5 rows:")
+print(df.head())
+print("\nTarget names:", cancer.target_names)`;
+                    break;
+                case 'diabetes':
+                    code = `# Import Libraries
+from sklearn.datasets import load_diabetes
+import pandas as pd
+
+# Load Diabetes dataset
+diabetes = load_diabetes()
+df = pd.DataFrame(diabetes.data, columns=diabetes.feature_names)
+df['target'] = diabetes.target
+
+print("Dataset shape:", df.shape)
+print("\nFirst 5 rows:")
+print(df.head())`;
+                    break;
+                case 'digits':
+                    code = `# Import Libraries
+from sklearn.datasets import load_digits
+import pandas as pd
+
+# Load Digits dataset
+digits = load_digits()
+df = pd.DataFrame(digits.data)
+df['target'] = digits.target
+
+print("Dataset shape:", df.shape)
+print("\nFirst 5 rows:")
+print(df.head())
+print("\nNumber of classes:", len(digits.target_names))`;
+                    break;
+                case 'wine':
+                    code = `# Import Libraries
+from sklearn.datasets import load_wine
+import pandas as pd
+
+# Load Wine dataset
+wine = load_wine()
+df = pd.DataFrame(wine.data, columns=wine.feature_names)
+df['target'] = wine.target
+
+print("Dataset shape:", df.shape)
+print("\nFirst 5 rows:")
+print(df.head())
+print("\nTarget names:", wine.target_names)`;
+                    break;
+                case 'reg':
+                    code = `# Import Libraries
+from sklearn.datasets import make_regression
+import pandas as pd
+
+# Generate regression dataset
+X, y = make_regression(n_samples=1000, n_features=10, noise=0.1, random_state=42)
+df = pd.DataFrame(X, columns=[f'feature_{i}' for i in range(X.shape[1])])
+df['target'] = y
+
+print("Dataset shape:", df.shape)
+print("\nFirst 5 rows:")
+print(df.head())`;
+                    break;
+                case 'classf':
+                    code = `# Import Libraries
+from sklearn.datasets import make_classification
+import pandas as pd
+
+# Generate classification dataset
+X, y = make_classification(n_samples=1000, n_features=10, n_classes=3, n_informative=8, random_state=42)
+df = pd.DataFrame(X, columns=[f'feature_{i}' for i in range(X.shape[1])])
+df['target'] = y
+
+print("Dataset shape:", df.shape)
+print("\nFirst 5 rows:")
+print(df.head())
+print("\nClass distribution:", pd.Series(y).value_counts().sort_index().to_dict())`;
+                    break;
+                default:
+                    code = `# Import Libraries
+from sklearn.datasets import load_iris
+import pandas as pd
+
+# Load Iris dataset
+iris = load_iris()
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+df['target'] = iris.target
+
+print("Dataset shape:", df.shape)
+print("\nFirst 5 rows:")
+print(df.head())
+print("\nTarget names:", iris.target_names)`;
+            }
+            document.getElementById('code-content').textContent = code;
+        }
+
+        // Browse file
+        function browseFile() {
+            document.getElementById('file-input').click();
+        }
+
+        // Update file path
+        function updateFilePath() {
+            const fileInput = document.getElementById('file-input');
+            const filePath = document.getElementById('data-path');
+            if (fileInput.files.length > 0) {
+                filePath.value = fileInput.files[0].name;
+            }
+        }
+
+        // Load data
+        function loadData() {
+            const path = document.getElementById('data-path').value;
+            const skipRows = document.getElementById('skip-rows').value;
+            let code = `# Import Libraries
+import pandas as pd
+
+# Load data from file
+try:
+    df = pd.read_csv('${path}', skiprows=${skipRows})
+    
+    print("Dataset shape:", df.shape)
+    #print("\nFirst 5 rows:")
+    #print(df.head())
+    #print("\nDataset info:")
+    #print(df.info())`;
+            document.getElementById('code-content').textContent = code;
+        }
+
+        // Apply cleaning
+        function applyCleaning() {
+            const missingValue = document.getElementById('missing-value').value;
+            const strategy = document.getElementById('cleaning-strategy').value;
+            let code = `# Import Libraries
+import pandas as pd
+from sklearn.impute import SimpleImputer
+
+# Handle missing values
+imputer = SimpleImputer(strategy='${strategy}')
+df_cleaned = pd.DataFrame(
+    imputer.fit_transform(df),
+    columns=df.columns
+)
+
+print("Original shape:", df.shape)
+print("Cleaned shape:", df_cleaned.shape)
+print("\nMissing values after cleaning:", df_cleaned.isnull().sum().sum())`;
+            document.getElementById('code-content').textContent = code;
+        }
+
+        // Feature selection
+        function featureSelection(selectionType) {
+            let code = '';
+            switch(selectionType) {
+                case 'percentile':
+                    code = `# Import Libraries
+from sklearn.feature_selection import SelectPercentile, f_classif
+
+# Select features by percentile (for classification)
+selector = SelectPercentile(score_func=f_classif, percentile=50)
+X_selected = selector.fit_transform(X, y)
+
+selected_features = selector.get_support(indices=True)
+print("Original features:", X.shape[1])
+print("Selected features:", len(selected_features))
+print("Selected feature indices:", selected_features)`;
+                    break;
+                case 'univariate':
+                    code = `# Import Libraries
+from sklearn.feature_selection import GenericUnivariateSelect, f_classif
+
+# Generic univariate feature selection
+selector = GenericUnivariateSelect(score_func=f_classif, mode='percentile', param=50)
+X_selected = selector.fit_transform(X, y)
+
+selected_features = selector.get_support(indices=True)
+print("Original features:", X.shape[1])
+print("Selected features:", len(selected_features))
+print("Selected feature indices:", selected_features)`;
+                    break;
+                case 'kbest':
+                    code = `# Import Libraries
+from sklearn.feature_selection import SelectKBest, f_classif
+
+# Select K best features
+k = min(10, X.shape[1])  # Select min(10, total_features)
+selector = SelectKBest(score_func=f_classif, k=k)
+X_selected = selector.fit_transform(X, y)
+
+selected_features = selector.get_support(indices=True)
+print("Original features:", X.shape[1])
+print(f"Selected {k} best features")
+print("Selected feature indices:", selected_features)`;
+                    break;
+                case 'model':
+                    code = `# Import Libraries
+from sklearn.feature_selection import SelectFromModel
+from sklearn.ensemble import RandomForestClassifier
+
+# Select features based on model importance
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+selector = SelectFromModel(model, prefit=False)
+X_selected = selector.fit_transform(X, y)
+
+selected_features = selector.get_support(indices=True)
+print("Original features:", X.shape[1])
+print("Selected features:", len(selected_features))
+print("Selected feature indices:", selected_features)`;
+                    break;
+                default:
+                    code = `# Import Libraries
+from sklearn.feature_selection import SelectKBest, f_classif
+
+# Select K best features
+k = min(10, X.shape[1])
+selector = SelectKBest(score_func=f_classif, k=k)
+X_selected = selector.fit_transform(X, y)
+
+selected_features = selector.get_support(indices=True)
+print("Original features:", X.shape[1])
+print(f"Selected {k} best features")
+print("Selected feature indices:", selected_features)`;
+            }
+            document.getElementById('code-content').textContent = code;
+        }
+
+        // Prepare data
+        function prepareData(preparationType) {
+            let code = '';
+            switch(preparationType) {
+                case 'scale':
+                    code = `# Import Libraries
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+
+# Split data first
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Scale features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+print("Original train shape:", X_train.shape)
+print("Scaled train shape:", X_train_scaled.shape)
+print("Scaled test shape:", X_test_scaled.shape)`;
+                    break;
+                case 'normalize':
+                    code = `# Import Libraries
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
+
+# Split data first
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Normalize features
+scaler = MinMaxScaler()
+X_train_norm = scaler.fit_transform(X_train)
+X_test_norm = scaler.transform(X_test)
+
+print("Original train shape:", X_train.shape)
+print("Normalized train shape:", X_train_norm.shape)
+print("Normalized test shape:", X_test_norm.shape)`;
+                    break;
+                case 'encode':
+                    code = `# Import Libraries
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+
+# Encode categorical variables
+df_encoded = df.copy()
+label_encoders = {}
+
+for column in df.select_dtypes(include=['object']).columns:
+    le = LabelEncoder()
+    df_encoded[column] = le.fit_transform(df[column].astype(str))
+    label_encoders[column] = le
+
+print("Original columns:", df.columns.tolist())
+print("Encoded columns:", df_encoded.columns.tolist())
+print("\nFirst 5 rows of encoded data:")
+print(df_encoded.head())`;
+                    break;
+                case 'split':
+                    code = `# Import Libraries
+from sklearn.model_selection import train_test_split
+
+# Split data into train and test sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, 
+    test_size=0.2, 
+    random_state=42,
+    stratify=y if len(set(y)) < 10 else None  # Stratify for classification
+)
+
+print("Training set shape:", X_train.shape)
+print("Test set shape:", X_test.shape)
+print("Training labels shape:", y_train.shape)
+print("Test labels shape:", y_test.shape)`;
+                    break;
+                default:
+                    code = `# Import Libraries
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+
+# Split data first
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Scale features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+print("Original train shape:", X_train.shape)
+print("Scaled train shape:", X_train_scaled.shape)
+print("Scaled test shape:", X_test_scaled.shape)`;
+            }
+            document.getElementById('code-content').textContent = code;
+        }
+
+        // Select dictionary item
+        function selectDictionaryItem(element, itemName) {
+            // Remove selected class from all items
+            document.querySelectorAll('.dictionary-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            // Add selected class to clicked item
+            element.classList.add('selected');
+            // Load corresponding items
+            loadDictionaryItems(itemName);
+        }
+
+        // Select dictionary item detail
+        function selectDictionaryItemDetail(element, itemName) {
+            // Remove selected class from all items
+            document.querySelectorAll('.dictionary-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            // Add selected class to clicked item
+            element.classList.add('selected');
+            // Load code for selected item
+            loadDictionaryCode(itemName);
+        }
+
+        // Load dictionary items based on category
+        function loadDictionaryItems(category) {
+            const itemsContainer = document.getElementById('dictionary-items-container');
+            let items = '';
+            const categoryMap = {
+                '00 Important Functions': [
+                    'Print Function', 'Input Function', 'Len Function', 'Range Function',
+                    'Zip Function', 'Enumerate Function', 'Map Function', 'Filter Function',
+                    'Reduce Function', 'Lambda Function'
+                ],
+                '01 Numpy': [
+                    'Numpy Array', 'Numpy Zeros', 'Numpy Ones', 'Numpy Arange',
+                    'Numpy Linspace', 'Numpy Reshape', 'Numpy Concatenate', 'Numpy Stack',
+                    'Numpy Split', 'Numpy Mean'
+                ],
+                '02 Pandas': [
+                    'Pandas DataFrame', 'Pandas Series', 'Pandas Read CSV', 'Pandas Read Excel',
+                    'Pandas Head', 'Pandas Tail', 'Pandas Info', 'Pandas Describe',
+                    'Pandas Drop', 'Pandas Fillna'
+                ],
+                '03 Matplotlib': [
+                    'Matplotlib Line', 'Matplotlib Scatter', 'Matplotlib Bar', 'Matplotlib Histogram',
+                    'Matplotlib Subplots', 'Matplotlib Legend', 'Matplotlib Grid', 'Matplotlib Labels',
+                    'Matplotlib Title', 'Matplotlib Save'
+                ],
+                '04 Sklearn Preprocessing': [
+                    'Sklearn StandardScaler', 'Sklearn MinMaxScaler', 'Sklearn RobustScaler',
+                    'Sklearn LabelEncoder', 'Sklearn OneHotEncoder', 'Sklearn Imputer',
+                    'Sklearn PolynomialFeatures', 'Sklearn Binarizer', 'Sklearn KBinsDiscretizer',
+                    'Sklearn Normalizer'
+                ],
+                '05 Sklearn Features': [
+                    'Sklearn SelectKBest', 'Sklearn SelectPercentile', 'Sklearn RFE',
+                    'Sklearn PCA', 'Sklearn LDA', 'Sklearn VarianceThreshold',
+                    'Sklearn MutualInfoClassif', 'Sklearn GenericUnivariateSelect',
+                    'Sklearn SelectFromModel', 'Sklearn RFECV'
+                ],
+                '06 Sklearn Models': [
+                    'Sklearn LinearRegression', 'Sklearn LogisticRegression', 'Sklearn SVM',
+                    'Sklearn DecisionTree', 'Sklearn RandomForest', 'Sklearn GradientBoosting',
+                    'Sklearn KNN', 'Sklearn NaiveBayes', 'Sklearn MLP', 'Sklearn KMeans'
+                ],
+                '07 Sklearn Check': [
+                    'Sklearn AccuracyScore', 'Sklearn PrecisionScore', 'Sklearn RecallScore',
+                    'Sklearn F1Score', 'Sklearn ConfusionMatrix', 'Sklearn ClassificationReport',
+                    'Sklearn ROC_AUC_Score', 'Sklearn MeanSquaredError', 'Sklearn MeanAbsoluteError',
+                    'Sklearn R2Score'
+                ],
+                '08 Seaborn': [
+                    'Seaborn Heatmap', 'Seaborn Pairplot', 'Seaborn Distplot', 'Seaborn Boxplot',
+                    'Seaborn Violinplot', 'Seaborn Scatterplot', 'Seaborn Lineplot', 'Seaborn Barplot',
+                    'Seaborn Countplot', 'Seaborn Jointplot'
+                ],
+                '09 TensorFlow Tools': [
+                    'TensorFlow Constants', 'TensorFlow Variables', 'TensorFlow Placeholders',
+                    'TensorFlow Operations', 'TensorFlow Sessions', 'TensorFlow Graphs',
+                    'TensorFlow Optimizers', 'TensorFlow Losses', 'TensorFlow Metrics',
+                    'TensorFlow Callbacks'
+                ],
+                '10 TensorFlow Models': [
+                    'TensorFlow Sequential', 'TensorFlow Functional', 'TensorFlow Custom',
+                    'TensorFlow Linear', 'TensorFlow DNN', 'TensorFlow CNN',
+                    'TensorFlow RNN', 'TensorFlow LSTM', 'TensorFlow GRU', 'TensorFlow Autoencoder'
+                ],
+                '11 Keras': [
+                    'Keras Sequential', 'Keras Functional', 'Keras Dense', 'Keras Conv2D',
+                    'Keras MaxPooling2D', 'Keras Dropout', 'Keras Flatten', 'Keras Activation',
+                    'Keras Optimizer', 'Keras Loss'
+                ]
+            };
+
+            const itemList = categoryMap[category] || categoryMap['00 Important Functions'];
+            items = itemList.map(item => 
+                `<div class="dictionary-item" onclick="selectDictionaryItemDetail(this, '${item}')">${item}</div>`
+            ).join('');
+
+            itemsContainer.innerHTML = items;
+        }
+
+        // Load dictionary code for selected item
+        function loadDictionaryCode(itemName) {
+            let code = '';
+            const codeMap = {
+                'Print Function': `# Print function
+print("Hello, World!")`,
+                'Input Function': `# Input function
+name = input("Enter your name: ")
+print(f"Hello, {name}!")`,
+                'Len Function': `# Length function
+my_list = [1, 2, 3, 4, 5]
+length = len(my_list)
+print(f"Length: {length}")`,
+                'Range Function': `# Range function
+for i in range(5):
+    print(i)
+
+# With start and step
+for i in range(2, 10, 2):
+    print(i)`,
+                'Zip Function': `# Zip function
+list1 = [1, 2, 3]
+list2 = ['a', 'b', 'c']
+zipped = zip(list1, list2)
+print(list(zipped))  # [(1, 'a'), (2, 'b'), (3, 'c')]`,
+                'Enumerate Function': `# Enumerate function
+fruits = ['apple', 'banana', 'cherry']
+for index, fruit in enumerate(fruits):
+    print(f"{index}: {fruit}")`,
+                'Map Function': `# Map function
+numbers = [1, 2, 3, 4, 5]
+squared = list(map(lambda x: x**2, numbers))
+print(squared)  # [1, 4, 9, 16, 25]`,
+                'Filter Function': `# Filter function
+numbers = [1, 2, 3, 4, 5, 6]
+evens = list(filter(lambda x: x % 2 == 0, numbers))
+print(evens)  # [2, 4, 6]`,
+                'Reduce Function': `# Reduce function
+from functools import reduce
+numbers = [1, 2, 3, 4, 5]
+product = reduce(lambda x, y: x * y, numbers)
+print(product)  # 120`,
+                'Lambda Function': `# Lambda function
+square = lambda x: x ** 2
+print(square(5))  # 25
+
+# With map
+numbers = [1, 2, 3, 4]
+squared = list(map(lambda x: x**2, numbers))
+print(squared)`,
+                'Numpy Array': `# Create numpy array
+import numpy as np
+arr = np.array([1, 2, 3, 4, 5])
+print(arr)
+print("Shape:", arr.shape)
+print("Type:", arr.dtype)`,
+                'Numpy Zeros': `# Create zeros array
+import numpy as np
+zeros_2d = np.zeros((3, 4))
+print(zeros_2d)
+
+# With specific dtype
+zeros_int = np.zeros(5, dtype=int)
+print(zeros_int)`,
+                'Numpy Ones': `# Create ones array
+import numpy as np
+ones_2d = np.ones((2, 3))
+print(ones_2d)
+
+# With specific dtype
+ones_float = np.ones(4, dtype=float)
+print(ones_float)`,
+                'Numpy Arange': `# Create array with range
+import numpy as np
+arr = np.arange(0, 10, 2)  # [0, 2, 4, 6, 8]
+print(arr)
+
+# Floating point
+arr_float = np.arange(0, 1, 0.1)
+print(arr_float)`,
+                'Numpy Linspace': `# Create array with linear spacing
+import numpy as np
+arr = np.linspace(0, 1, 5)  # 5 points from 0 to 1
+print(arr)
+
+# Without endpoint
+arr_no_end = np.linspace(0, 1, 5, endpoint=False)
+print(arr_no_end)`,
+                'Numpy Reshape': `# Reshape array
+import numpy as np
+arr = np.arange(12)
+reshaped = arr.reshape(3, 4)
+print("Original:", arr)
+print("Reshaped:")
+print(reshaped)`,
+                'Numpy Concatenate': `# Concatenate arrays
+import numpy as np
+arr1 = np.array([1, 2, 3])
+arr2 = np.array([4, 5, 6])
+concatenated = np.concatenate((arr1, arr2))
+print(concatenated)  # [1 2 3 4 5 6]
+
+# 2D arrays
+arr1_2d = np.array([[1, 2], [3, 4]])
+arr2_2d = np.array([[5, 6], [7, 8]])
+concat_2d = np.concatenate((arr1_2d, arr2_2d), axis=0)
+print(concat_2d)`,
+                'Numpy Stack': `# Stack arrays
+import numpy as np
+arr1 = np.array([1, 2, 3])
+arr2 = np.array([4, 5, 6])
+
+# Vertical stack
+vstacked = np.vstack((arr1, arr2))
+print("VStack:")
+print(vstacked)
+
+# Horizontal stack
+hstacked = np.hstack((arr1, arr2))
+print("HStack:", hstacked)`,
+                'Numpy Split': `# Split array
+import numpy as np
+arr = np.arange(12)
+split_arrays = np.split(arr, 3)
+print("Original:", arr)
+print("Split into 3:")
+for i, split_arr in enumerate(split_arrays):
+    print(f"Part {i+1}:", split_arr)`,
+                'Numpy Mean': `# Calculate mean
+import numpy as np
+arr = np.array([1, 2, 3, 4, 5])
+mean_val = np.mean(arr)
+print(f"Mean: {mean_val}")
+
+# Along axis
+arr_2d = np.array([[1, 2, 3], [4, 5, 6]])
+mean_axis0 = np.mean(arr_2d, axis=0)
+mean_axis1 = np.mean(arr_2d, axis=1)
+print("Mean axis=0:", mean_axis0)
+print("Mean axis=1:", mean_axis1)`,
+                'Pandas DataFrame': `# Create DataFrame
+import pandas as pd
+df = pd.DataFrame({
+    'Name': ['Alice', 'Bob', 'Charlie'],
+    'Age': [25, 30, 35],
+    'City': ['New York', 'London', 'Tokyo']
+})
+print(df)`,
+                'Pandas Series': `# Create Series
+import pandas as pd
+series = pd.Series([1, 2, 3, 4, 5], name='Numbers')
+print(series)
+print("Index:", series.index)
+print("Values:", series.values)`,
+                'Pandas Read CSV': `# Read CSV file
+import pandas as pd
+df = pd.read_csv('data.csv')
+
+# With options
+df = pd.read_csv(
+    'data.csv',
+    sep=',',
+    header=0,
+    index_col=0,
+    na_values=['NA', 'null']
+)
+print(df.head())`,
+                'Pandas Read Excel': `# Read Excel file
+import pandas as pd
+df = pd.read_excel('data.xlsx', sheet_name='Sheet1')
+
+# Multiple sheets
+dfs = pd.read_excel('data.xlsx', sheet_name=None)
+print("Sheet names:", list(dfs.keys()))`,
+                'Pandas Head': `# Show first 5 rows
+import pandas as pd
+df = pd.read_csv('data.csv')
+print("First 5 rows:")
+print(df.head())
+
+# Custom number of rows
+print("First 10 rows:")
+print(df.head(10))`,
+                'Pandas Tail': `# Show last 5 rows
+import pandas as pd
+df = pd.read_csv('data.csv')
+print("Last 5 rows:")
+print(df.tail())
+
+# Custom number of rows
+print("Last 3 rows:")
+print(df.tail(3))`,
+                'Pandas Info': `# Show DataFrame info
+import pandas as pd
+df = pd.read_csv('data.csv')
+print("DataFrame Info:")
+df.info()`,
+                'Pandas Describe': `# Show statistical summary
+import pandas as pd
+df = pd.read_csv('data.csv')
+print("Statistical Summary:")
+print(df.describe())
+
+# Include categorical
+print("Full Summary:")
+print(df.describe(include='all'))`,
+                'Pandas Drop': `# Drop column
+import pandas as pd
+df = pd.read_csv('data.csv')
+df_dropped = df.drop('unnecessary_column', axis=1)
+
+# Drop rows by index
+df_dropped_rows = df.drop([0, 1, 2])
+
+# Drop with condition
+df_filtered = df.drop(df[df['age'] < 18].index)`,
+                'Pandas Fillna': `# Fill missing values
+import pandas as pd
+df = pd.read_csv('data.csv')
+
+# Fill with specific value
+df_filled = df.fillna(0)
+
+# Forward fill
+df_ffill = df.fillna(method='ffill')
+
+# Backward fill
+df_bfill = df.fillna(method='bfill')
+
+# Fill with mean
+df_mean = df.fillna(df.mean())`,
+                'Sklearn StandardScaler': `# Standardize features
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+
+# Split first
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Scale
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)`,
+                'Sklearn MinMaxScaler': `# Normalize features
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
+
+# Split first
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Normalize
+scaler = MinMaxScaler()
+X_train_norm = scaler.fit_transform(X_train)
+X_test_norm = scaler.transform(X_test)`,
+                'Sklearn RobustScaler': `# Robust scaling (handles outliers)
+from sklearn.preprocessing import RobustScaler
+from sklearn.model_selection import train_test_split
+
+# Split first
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Robust scale
+scaler = RobustScaler()
+X_train_robust = scaler.fit_transform(X_train)
+X_test_robust = scaler.transform(X_test)`,
+                'Sklearn LabelEncoder': `# Encode labels
+from sklearn.preprocessing import LabelEncoder
+
+# For target variable
+le = LabelEncoder()
+y_encoded = le.fit_transform(y)
+
+# For features
+df_encoded = df.copy()
+for col in df.select_dtypes(include=['object']).columns:
+    le = LabelEncoder()
+    df_encoded[col] = le.fit_transform(df[col])`,
+                'Sklearn OneHotEncoder': `# One-hot encode
+from sklearn.preprocessing import OneHotEncoder
+import pandas as pd
+
+# For specific columns
+encoder = OneHotEncoder(sparse=False, drop='first')
+encoded_features = encoder.fit_transform(df[['category_column']])
+
+# Create DataFrame
+encoded_df = pd.DataFrame(
+    encoded_features,
+    columns=encoder.get_feature_names_out(['category_column'])
+)`,
+                'Sklearn Imputer': `# Impute missing values
+from sklearn.impute import SimpleImputer
+import pandas as pd
+
+# Mean imputation
+imputer = SimpleImputer(strategy='mean')
+df_imputed = pd.DataFrame(
+    imputer.fit_transform(df),
+    columns=df.columns
+)
+
+# Most frequent for categorical
+cat_imputer = SimpleImputer(strategy='most_frequent')
+df_cat_imputed = pd.DataFrame(
+    cat_imputer.fit_transform(df_cat),
+    columns=df_cat.columns
+)`,
+                'Sklearn PolynomialFeatures': `# Create polynomial features
+from sklearn.preprocessing import PolynomialFeatures
+
+# Generate polynomial and interaction features
+poly = PolynomialFeatures(degree=2, include_bias=False)
+X_poly = poly.fit_transform(X)
+
+print("Original features:", X.shape[1])
+print("Polynomial features:", X_poly.shape[1])
+print("Feature names:", poly.get_feature_names_out())`,
+                'Sklearn Binarizer': `# Binarize features
+from sklearn.preprocessing import Binarizer
+
+# Convert to binary based on threshold
+binarizer = Binarizer(threshold=0.5)
+X_binary = binarizer.fit_transform(X)
+
+print("Original range:", X.min(), "to", X.max())
+print("Binary range:", X_binary.min(), "to", X_binary.max())`,
+                'Sklearn KBinsDiscretizer': `# Discretize features
+from sklearn.preprocessing import KBinsDiscretizer
+
+# Convert continuous to discrete
+discretizer = KBinsDiscretizer(n_bins=5, encode='ordinal', strategy='uniform')
+X_discretized = discretizer.fit_transform(X)
+
+print("Original shape:", X.shape)
+print("Discretized shape:", X_discretized.shape)`,
+                'Sklearn Normalizer': `# Normalize samples (L2 norm)
+from sklearn.preprocessing import Normalizer
+
+# Normalize each sample to unit norm
+normalizer = Normalizer(norm='l2')
+X_normalized = normalizer.fit_transform(X)
+
+print("Original norms:", np.linalg.norm(X, axis=1)[:5])
+print("Normalized norms:", np.linalg.norm(X_normalized, axis=1)[:5])`,
+                'Sklearn SelectKBest': `# Select best features
+from sklearn.feature_selection import SelectKBest, f_classif
+
+# Select k best features
+k = min(10, X.shape[1])
+selector = SelectKBest(score_func=f_classif, k=k)
+X_selected = selector.fit_transform(X, y)
+
+# Get selected feature names
+selected_mask = selector.get_support()
+selected_features = feature_names[selected_mask]
+print("Selected features:", selected_features)`,
+                'Sklearn SelectPercentile': `# Select features by percentile
+from sklearn.feature_selection import SelectPercentile, f_classif
+
+# Select top 50% of features
+selector = SelectPercentile(score_func=f_classif, percentile=50)
+X_selected = selector.fit_transform(X, y)
+
+selected_mask = selector.get_support()
+selected_features = feature_names[selected_mask]
+print("Selected features:", selected_features)`,
+                'Sklearn RFE': `# Recursive feature elimination
+from sklearn.feature_selection import RFE
+from sklearn.ensemble import RandomForestClassifier
+
+# RFE with Random Forest
+estimator = RandomForestClassifier(n_estimators=100, random_state=42)
+selector = RFE(estimator, n_features_to_select=10, step=1)
+X_selected = selector.fit_transform(X, y)
+
+selected_mask = selector.support_
+selected_features = feature_names[selected_mask]
+print("Selected features:", selected_features)`,
+                'Sklearn PCA': `# Principal Component Analysis
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+
+# Standardize first
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Apply PCA
+pca = PCA(n_components=0.95)  # Retain 95% variance
+X_pca = pca.fit_transform(X_scaled)
+
+print("Original features:", X.shape[1])
+print("PCA components:", X_pca.shape[1])
+print("Explained variance ratio:", pca.explained_variance_ratio_)`,
+                'Sklearn LDA': `# Linear Discriminant Analysis
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.model_selection import train_test_split
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Apply LDA
+lda = LinearDiscriminantAnalysis(n_components=min(len(np.unique(y))-1, X.shape[1]))
+X_train_lda = lda.fit_transform(X_train, y_train)
+X_test_lda = lda.transform(X_test)
+
+print("Original features:", X_train.shape[1])
+print("LDA components:", X_train_lda.shape[1])`,
+                'Sklearn VarianceThreshold': `# Remove low variance features
+from sklearn.feature_selection import VarianceThreshold
+
+# Remove features with variance below threshold
+selector = VarianceThreshold(threshold=0.1)
+X_selected = selector.fit_transform(X)
+
+selected_mask = selector.get_support()
+selected_features = feature_names[selected_mask]
+print("Original features:", X.shape[1])
+print("Selected features:", X_selected.shape[1])
+print("Selected features:", selected_features)`,
+                'Sklearn MutualInfoClassif': `# Mutual information for classification
+from sklearn.feature_selection import mutual_info_classif
+import pandas as pd
+
+# Calculate mutual information scores
+mi_scores = mutual_info_classif(X, y, random_state=42)
+mi_scores = pd.Series(mi_scores, index=feature_names)
+mi_scores = mi_scores.sort_values(ascending=False)
+
+print("Top 10 features by mutual information:")
+print(mi_scores.head(10))`,
+                'Sklearn GenericUnivariateSelect': `# Generic univariate selection
+from sklearn.feature_selection import GenericUnivariateSelect, f_classif
+
+# Select top 50% of features
+selector = GenericUnivariateSelect(score_func=f_classif, mode='percentile', param=50)
+X_selected = selector.fit_transform(X, y)
+
+selected_mask = selector.get_support()
+selected_features = feature_names[selected_mask]
+print("Selected features:", selected_features)`,
+                'Sklearn SelectFromModel': `# Select based on model
+from sklearn.feature_selection import SelectFromModel
+from sklearn.ensemble import RandomForestClassifier
+
+# Feature selection using Random Forest
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+selector = SelectFromModel(model, threshold='median')
+X_selected = selector.fit_transform(X, y)
+
+selected_mask = selector.get_support()
+selected_features = feature_names[selected_mask]
+print("Selected features:", selected_features)`,
+                'Sklearn RFECV': `# Recursive feature elimination with CV
+from sklearn.feature_selection import RFECV
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import StratifiedKFold
+
+# RFECV with cross-validation
+estimator = RandomForestClassifier(n_estimators=100, random_state=42)
+cv = StratifiedKFold(5)
+selector = RFECV(estimator, step=1, cv=cv, scoring='accuracy')
+X_selected = selector.fit_transform(X, y)
+
+print("Optimal number of features:", selector.n_features_)
+print("Selected features:", feature_names[selector.support_])`,
+                'Sklearn LinearRegression': `# Linear Regression model
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score, mean_squared_error
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print("R² Score:", r2_score(y_test, y_pred))
+print("MSE:", mean_squared_error(y_test, y_pred))`,
+                'Sklearn LogisticRegression': `# Logistic Regression model
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train model
+model = LogisticRegression(random_state=42, max_iter=1000)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))`,
+                'Sklearn SVM': `# Support Vector Machine model
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train model
+model = SVC(kernel='rbf', C=1.0, gamma='scale', random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))`,
+                'Sklearn DecisionTree': `# Decision Tree model
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train model
+model = DecisionTreeClassifier(max_depth=5, random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))`,
+                'Sklearn RandomForest': `# Random Forest model
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train model
+model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))`,
+                'Sklearn GradientBoosting': `# Gradient Boosting model
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train model
+model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))`,
+                'Sklearn KNN': `# K-Nearest Neighbors model
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train model
+model = KNeighborsClassifier(n_neighbors=5)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))`,
+                'Sklearn NaiveBayes': `# Naive Bayes model
+from sklearn.naive_bayes import GaussianNB
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train model
+model = GaussianNB()
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))`,
+                'Sklearn MLP': `# Multi-layer Perceptron model
+from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train model
+model = MLPClassifier(hidden_layer_sizes=(100,), max_iter=1000, random_state=42)
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))`,
+                'Sklearn KMeans': `# K-Means clustering model
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+
+# Standardize features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Apply K-Means
+kmeans = KMeans(n_clusters=3, random_state=42)
+cluster_labels = kmeans.fit_predict(X_scaled)
+
+print("Cluster labels:", cluster_labels[:10])
+print("Inertia:", kmeans.inertia_)
+print("Cluster centers shape:", kmeans.cluster_centers_.shape)`,
+                'Sklearn AccuracyScore': `# Accuracy score
+from sklearn.metrics import accuracy_score
+
+# For classification
+accuracy = accuracy_score(y_true, y_pred)
+print(f"Accuracy: {accuracy:.4f}")
+
+# With normalize=False for count
+accuracy_count = accuracy_score(y_true, y_pred, normalize=False)
+print(f"Correct predictions: {accuracy_count}")`,
+                'Sklearn PrecisionScore': `# Precision score
+from sklearn.metrics import precision_score
+
+# Binary classification
+precision = precision_score(y_true, y_pred)
+print(f"Precision: {precision:.4f}")
+
+# Multiclass
+precision_macro = precision_score(y_true, y_pred, average='macro')
+precision_micro = precision_score(y_true, y_pred, average='micro')
+precision_weighted = precision_score(y_true, y_pred, average='weighted')
+
+print(f"Precision (macro): {precision_macro:.4f}")
+print(f"Precision (micro): {precision_micro:.4f}")
+print(f"Precision (weighted): {precision_weighted:.4f}")`,
+                'Sklearn RecallScore': `# Recall score
+from sklearn.metrics import recall_score
+
+# Binary classification
+recall = recall_score(y_true, y_pred)
+print(f"Recall: {recall:.4f}")
+
+# Multiclass
+recall_macro = recall_score(y_true, y_pred, average='macro')
+recall_micro = recall_score(y_true, y_pred, average='micro')
+recall_weighted = recall_score(y_true, y_pred, average='weighted')
+
+print(f"Recall (macro): {recall_macro:.4f}")
+print(f"Recall (micro): {recall_micro:.4f}")
+print(f"Recall (weighted): {recall_weighted:.4f}")`,
+                'Sklearn F1Score': `# F1 score
+from sklearn.metrics import f1_score
+
+# Binary classification
+f1 = f1_score(y_true, y_pred)
+print(f"F1 Score: {f1:.4f}")
+
+# Multiclass
+f1_macro = f1_score(y_true, y_pred, average='macro')
+f1_micro = f1_score(y_true, y_pred, average='micro')
+f1_weighted = f1_score(y_true, y_pred, average='weighted')
+
+print(f"F1 Score (macro): {f1_macro:.4f}")
+print(f"F1 Score (micro): {f1_micro:.4f}")
+print(f"F1 Score (weighted): {f1_weighted:.4f}")`,
+                'Sklearn ConfusionMatrix': `# Confusion matrix
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create confusion matrix
+cm = confusion_matrix(y_true, y_pred)
+
+# Plot confusion matrix
+plt.figure(figsize=(8, 6))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+plt.title('Confusion Matrix')
+plt.ylabel('Actual')
+plt.xlabel('Predicted')
+plt.show()`,
+                'Sklearn ClassificationReport': `# Classification report
+from sklearn.metrics import classification_report
+
+# Generate detailed classification report
+report = classification_report(y_true, y_pred)
+print("Classification Report:")
+print(report)
+
+# As dictionary
+report_dict = classification_report(y_true, y_pred, output_dict=True)
+print("\nPrecision for class 0:", report_dict['0']['precision'])`,
+                'Sklearn ROC_AUC_Score': `# ROC AUC score
+from sklearn.metrics import roc_auc_score
+from sklearn.preprocessing import label_binarize
+
+# Binary classification
+auc = roc_auc_score(y_true, y_pred_proba)
+print(f"ROC AUC: {auc:.4f}")
+
+# Multiclass (one-vs-rest)
+y_true_binarized = label_binarize(y_true, classes=np.unique(y_true))
+auc_ovr = roc_auc_score(y_true_binarized, y_pred_proba, multi_class='ovr')
+print(f"ROC AUC (OvR): {auc_ovr:.4f}")`,
+                'Sklearn MeanSquaredError': `# Mean squared error
+from sklearn.metrics import mean_squared_error
+import numpy as np
+
+# Calculate MSE
+mse = mean_squared_error(y_true, y_pred)
+print(f"MSE: {mse:.4f}")
+
+# RMSE
+rmse = np.sqrt(mse)
+print(f"RMSE: {rmse:.4f}")`,
+                'Sklearn MeanAbsoluteError': `# Mean absolute error
+from sklearn.metrics import mean_absolute_error
+
+# Calculate MAE
+mae = mean_absolute_error(y_true, y_pred)
+print(f"MAE: {mae:.4f}")`,
+                'Sklearn R2Score': `# R2 score
+from sklearn.metrics import r2_score
+
+# Calculate R²
+r2 = r2_score(y_true, y_pred)
+print(f"R² Score: {r2:.4f}")
+
+# Interpretation
+if r2 > 0.9:
+    print("Excellent fit")
+elif r2 > 0.7:
+    print("Good fit")
+elif r2 > 0.5:
+    print("Moderate fit")
+else:
+    print("Poor fit")`,
+                'Seaborn Heatmap': `# Heatmap
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Correlation heatmap
+plt.figure(figsize=(10, 8))
+correlation_matrix = df.corr()
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
+plt.title('Feature Correlation Heatmap')
+plt.show()`,
+                'Seaborn Pairplot': `# Pairplot
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Pairwise relationships
+sns.pairplot(df, hue='target_column', diag_kind='hist')
+plt.suptitle('Pairwise Relationships', y=1.02)
+plt.show()`,
+                'Seaborn Distplot': `# Distribution plot
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Distribution of a feature
+plt.figure(figsize=(10, 6))
+sns.histplot(df['feature_column'], kde=True)
+plt.title('Distribution of Feature')
+plt.show()`,
+                'Seaborn Boxplot': `# Boxplot
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Boxplot by category
+plt.figure(figsize=(12, 6))
+sns.boxplot(x='category_column', y='value_column', data=df)
+plt.title('Distribution by Category')
+plt.xticks(rotation=45)
+plt.show()`,
+                'Seaborn Violinplot': `# Violin plot
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Violin plot by category
+plt.figure(figsize=(12, 6))
+sns.violinplot(x='category_column', y='value_column', data=df)
+plt.title('Distribution by Category (Violin)')
+plt.xticks(rotation=45)
+plt.show()`,
+                'Seaborn Scatterplot': `# Scatter plot
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Scatter plot with hue
+plt.figure(figsize=(10, 8))
+sns.scatterplot(x='x_column', y='y_column', hue='category_column', data=df)
+plt.title('Scatter Plot with Categories')
+plt.show()`,
+                'Seaborn Lineplot': `# Line plot
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Line plot with confidence interval
+plt.figure(figsize=(12, 6))
+sns.lineplot(x='time_column', y='value_column', hue='category_column', data=df)
+plt.title('Time Series by Category')
+plt.show()`,
+                'Seaborn Barplot': `# Bar plot
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Bar plot with error bars
+plt.figure(figsize=(12, 6))
+sns.barplot(x='category_column', y='value_column', data=df)
+plt.title('Average Values by Category')
+plt.xticks(rotation=45)
+plt.show()`,
+                'Seaborn Countplot': `# Count plot
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Count of categories
+plt.figure(figsize=(12, 6))
+sns.countplot(x='category_column', data=df)
+plt.title('Count of Categories')
+plt.xticks(rotation=45)
+plt.show()`,
+                'Seaborn Jointplot': `# Joint plot
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Joint distribution
+sns.jointplot(x='x_column', y='y_column', data=df, kind='scatter')
+plt.suptitle('Joint Distribution', y=1.02)
+plt.show()`,
+                'TensorFlow Constants': `# TensorFlow constants
+import tensorflow as tf
+
+# Create constants
+a = tf.constant(5.0)
+b = tf.constant(3.0)
+c = tf.constant([1, 2, 3, 4])
+d = tf.constant([[1, 2], [3, 4]])
+
+print("Scalar constant:", a.numpy())
+print("Vector constant:", c.numpy())
+print("Matrix constant:", d.numpy())`,
+                'TensorFlow Variables': `# TensorFlow variables
+import tensorflow as tf
+
+# Create variables
+w = tf.Variable(tf.random.normal([3, 2]))
+b = tf.Variable(tf.zeros([2]))
+
+print("Weight shape:", w.shape)
+print("Bias shape:", b.shape)
+
+# Update variables
+w.assign(w * 2)
+b.assign_add([1, 1])
+print("Updated bias:", b.numpy())`,
+                'TensorFlow Placeholders': `# TensorFlow placeholders (TF 1.x style)
+# Note: Placeholders are not used in TF 2.x
+# Use tf.function with input parameters instead
+
+import tensorflow as tf
+
+@tf.function
+def my_function(x, y):
+    return tf.add(x, y)
+
+# Usage
+result = my_function(tf.constant(3.0), tf.constant(4.0))
+print("Result:", result.numpy())`,
+                'TensorFlow Operations': `# TensorFlow operations
+import tensorflow as tf
+
+# Basic operations
+a = tf.constant([1, 2, 3])
+b = tf.constant([4, 5, 6])
+
+add_result = tf.add(a, b)
+mul_result = tf.multiply(a, b)
+matmul_result = tf.matmul(tf.reshape(a, [1, 3]), tf.reshape(b, [3, 1]))
+
+print("Addition:", add_result.numpy())
+print("Multiplication:", mul_result.numpy())
+print("Matrix multiplication:", matmul_result.numpy())`,
+                'TensorFlow Sessions': `# TensorFlow sessions (TF 1.x style)
+# Note: Sessions are not used in TF 2.x
+# Eager execution is enabled by default
+
+import tensorflow as tf
+
+# TF 2.x - no session needed
+a = tf.constant(5)
+b = tf.constant(3)
+c = tf.add(a, b)
+print("Result:", c.numpy())`,
+                'TensorFlow Graphs': `# TensorFlow graphs (TF 2.x)
+import tensorflow as tf
+
+# Create a computational graph
+@tf.function
+def compute_graph(x, y):
+    return tf.square(tf.add(x, y))
+
+# The function is automatically converted to a graph
+result = compute_graph(tf.constant(2.0), tf.constant(3.0))
+print("Result:", result.numpy())
+
+# View the graph
+print("Graph:", compute_graph.get_concrete_function(tf.TensorSpec(shape=[], dtype=tf.float32)).graph)`,
+                'TensorFlow Optimizers': `# TensorFlow optimizers
+import tensorflow as tf
+
+# Create optimizer
+optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
+
+# Example usage in training loop
+var = tf.Variable(2.0)
+
+for step in range(100):
+    with tf.GradientTape() as tape:
+        loss = (var - 5) ** 2
+    
+    gradients = tape.gradient(loss, [var])
+    optimizer.apply_gradients(zip(gradients, [var]))
+
+print("Final value:", var.numpy())`,
+                'TensorFlow Losses': `# TensorFlow losses
+import tensorflow as tf
+
+# Common loss functions
+y_true = tf.constant([1, 0, 1, 1])
+y_pred = tf.constant([0.9, 0.2, 0.8, 0.7])
+
+# Binary crossentropy
+bce_loss = tf.keras.losses.binary_crossentropy(y_true, y_pred)
+print("Binary Crossentropy:", bce_loss.numpy())
+
+# Mean squared error
+mse_loss = tf.keras.losses.mean_squared_error(y_true, y_pred)
+print("MSE:", mse_loss.numpy())
+
+# Sparse categorical crossentropy
+y_true_sparse = tf.constant([0, 1, 2])
+y_pred_logits = tf.constant([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+scce_loss = tf.keras.losses.sparse_categorical_crossentropy(y_true_sparse, y_pred_logits)
+print("Sparse Categorical Crossentropy:", scce_loss.numpy())`,
+                'TensorFlow Metrics': `# TensorFlow metrics
+import tensorflow as tf
+
+# Create metrics
+accuracy = tf.keras.metrics.Accuracy()
+precision = tf.keras.metrics.Precision()
+
+# Update metrics
+y_true = tf.constant([1, 0, 1, 1])
+y_pred = tf.constant([1, 0, 0, 1])
+
+accuracy.update_state(y_true, y_pred)
+precision.update_state(y_true, y_pred)
+
+print("Accuracy:", accuracy.result().numpy())
+print("Precision:", precision.result().numpy())
+
+# Reset metrics
+accuracy.reset_states()
+precision.reset_states()`,
+                'TensorFlow Callbacks': `# TensorFlow callbacks
+import tensorflow as tf
+
+# Common callbacks
+callbacks = [
+    tf.keras.callbacks.EarlyStopping(patience=5, restore_best_weights=True),
+    tf.keras.callbacks.ReduceLROnPlateau(factor=0.5, patience=3),
+    tf.keras.callbacks.ModelCheckpoint('best_model.h5', save_best_only=True),
+    tf.keras.callbacks.TensorBoard(log_dir='./logs')
+]
+
+# Usage in model training
+# model.fit(X_train, y_train, validation_data=(X_val, y_val), callbacks=callbacks)`,
+                'TensorFlow Sequential': `# TensorFlow Sequential model
+import tensorflow as tf
+
+# Build sequential model
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64, activation='relu', input_shape=(10,)),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(32, activation='relu'),
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+
+# Compile model
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+# Model summary
+model.summary()`,
+                'TensorFlow Functional': `# TensorFlow Functional API
+import tensorflow as tf
+
+# Build functional model
+inputs = tf.keras.Input(shape=(10,))
+x = tf.keras.layers.Dense(64, activation='relu')(inputs)
+x = tf.keras.layers.Dropout(0.2)(x)
+x = tf.keras.layers.Dense(32, activation='relu')(x)
+outputs = tf.keras.layers.Dense(1, activation='sigmoid')(x)
+
+model = tf.keras.Model(inputs=inputs, outputs=outputs)
+
+# Compile model
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+model.summary()`,
+                'TensorFlow Custom': `# TensorFlow custom model
+import tensorflow as tf
+
+class CustomModel(tf.keras.Model):
+    def __init__(self, num_classes):
+        super(CustomModel, self).__init__()
+        self.dense1 = tf.keras.layers.Dense(64, activation='relu')
+        self.dropout = tf.keras.layers.Dropout(0.2)
+        self.dense2 = tf.keras.layers.Dense(num_classes, activation='softmax')
+    
+    def call(self, inputs, training=False):
+        x = self.dense1(inputs)
+        x = self.dropout(x, training=training)
+        return self.dense2(x)
+
+# Create and compile model
+model = CustomModel(num_classes=3)
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])`,
+                'TensorFlow Linear': `# TensorFlow linear model
+import tensorflow as tf
+
+# Simple linear regression
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(1, input_shape=(X_train.shape[1],))
+])
+
+model.compile(optimizer='adam', loss='mse', metrics=['mae'])
+history = model.fit(X_train, y_train, validation_split=0.2, epochs=100, verbose=0)
+
+# Evaluate
+test_loss, test_mae = model.evaluate(X_test, y_test, verbose=0)
+print(f"Test MAE: {test_mae:.4f}")`,
+                'TensorFlow DNN': `# TensorFlow deep neural network
+import tensorflow as tf
+
+# Deep neural network
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(128, activation='relu', input_shape=(X_train.shape[1],)),
+    tf.keras.layers.Dropout(0.3),
+    tf.keras.layers.Dense(64, activation='relu'),
+    tf.keras.layers.Dropout(0.3),
+    tf.keras.layers.Dense(32, activation='relu'),
+    tf.keras.layers.Dense(1)
+])
+
+model.compile(optimizer='adam', loss='mse', metrics=['mae'])
+history = model.fit(X_train, y_train, validation_split=0.2, epochs=100, verbose=0)`,
+                'TensorFlow CNN': `# TensorFlow convolutional neural network
+import tensorflow as tf
+
+# CNN for image classification
+model = tf.keras.Sequential([
+    tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
+    tf.keras.layers.MaxPooling2D((2, 2)),
+    tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    tf.keras.layers.MaxPooling2D((2, 2)),
+    tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(64, activation='relu'),
+    tf.keras.layers.Dense(10, activation='softmax')
+])
+
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+history = model.fit(X_train, y_train, validation_split=0.2, epochs=10, verbose=0)`,
+                'TensorFlow RNN': `# TensorFlow recurrent neural network
+import tensorflow as tf
+
+# Simple RNN for sequence data
+model = tf.keras.Sequential([
+    tf.keras.layers.SimpleRNN(50, return_sequences=True, input_shape=(timesteps, features)),
+    tf.keras.layers.SimpleRNN(50),
+    tf.keras.layers.Dense(1)
+])
+
+model.compile(optimizer='adam', loss='mse')
+history = model.fit(X_train, y_train, validation_split=0.2, epochs=100, verbose=0)`,
+                'TensorFlow LSTM': `# TensorFlow LSTM model
+import tensorflow as tf
+
+# LSTM for sequence data
+model = tf.keras.Sequential([
+    tf.keras.layers.LSTM(50, return_sequences=True, input_shape=(timesteps, features)),
+    tf.keras.layers.LSTM(50),
+    tf.keras.layers.Dense(1)
+])
+
+model.compile(optimizer='adam', loss='mse')
+history = model.fit(X_train, y_train, validation_split=0.2, epochs=100, verbose=0)`,
+                'TensorFlow GRU': `# TensorFlow GRU model
+import tensorflow as tf
+
+# GRU for sequence data
+model = tf.keras.Sequential([
+    tf.keras.layers.GRU(50, return_sequences=True, input_shape=(timesteps, features)),
+    tf.keras.layers.GRU(50),
+    tf.keras.layers.Dense(1)
+])
+
+model.compile(optimizer='adam', loss='mse')
+history = model.fit(X_train, y_train, validation_split=0.2, epochs=100, verbose=0)`,
+                'TensorFlow Autoencoder': `# TensorFlow autoencoder
+import tensorflow as tf
+
+# Simple autoencoder
+encoding_dim = 32
+input_dim = X_train.shape[1]
+
+# Encoder
+input_layer = tf.keras.layers.Input(shape=(input_dim,))
+encoded = tf.keras.layers.Dense(encoding_dim, activation='relu')(input_layer)
+
+# Decoder
+decoded = tf.keras.layers.Dense(input_dim, activation='sigmoid')(encoded)
+
+# Autoencoder model
+autoencoder = tf.keras.Model(input_layer, decoded)
+autoencoder.compile(optimizer='adam', loss='binary_crossentropy')
+
+# Train
+autoencoder.fit(X_train, X_train, validation_data=(X_test, X_test), epochs=50, verbose=0)`,
+                'Keras Sequential': `# Keras Sequential model
+import tensorflow as tf
+
+# Sequential model
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64, activation='relu', input_shape=(10,)),
+    tf.keras.layers.Dense(32, activation='relu'),
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+model.summary()`,
+                'Keras Functional': `# Keras Functional API
+import tensorflow as tf
+
+# Functional model
+inputs = tf.keras.Input(shape=(10,))
+x = tf.keras.layers.Dense(64, activation='relu')(inputs)
+x = tf.keras.layers.Dense(32, activation='relu')(x)
+outputs = tf.keras.layers.Dense(1, activation='sigmoid')(x)
+
+model = tf.keras.Model(inputs=inputs, outputs=outputs)
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])`,
+                'Keras Dense': `# Keras Dense layer
+import tensorflow as tf
+
+# Dense layer examples
+layer1 = tf.keras.layers.Dense(64, activation='relu')
+layer2 = tf.keras.layers.Dense(10, activation='softmax')
+layer3 = tf.keras.layers.Dense(1)  # Linear activation
+
+# Usage in model
+model = tf.keras.Sequential([
+    layer1,
+    tf.keras.layers.Dropout(0.2),
+    layer2
+])`,
+                'Keras Conv2D': `# Keras Conv2D layer
+import tensorflow as tf
+
+# Conv2D layer examples
+conv1 = tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1))
+conv2 = tf.keras.layers.Conv2D(64, (3, 3), activation='relu')
+conv3 = tf.keras.layers.Conv2D(128, (5, 5), activation='relu', padding='same')
+
+# Usage in model
+model = tf.keras.Sequential([
+    conv1,
+    tf.keras.layers.MaxPooling2D((2, 2)),
+    conv2,
+    tf.keras.layers.MaxPooling2D((2, 2)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(10, activation='softmax')
+])`,
+                'Keras MaxPooling2D': `# Keras MaxPooling2D layer
+import tensorflow as tf
+
+# MaxPooling2D examples
+pool1 = tf.keras.layers.MaxPooling2D((2, 2))
+pool2 = tf.keras.layers.MaxPooling2D(pool_size=3, strides=2)
+pool3 = tf.keras.layers.MaxPooling2D((2, 2), padding='same')
+
+# Usage in CNN
+model = tf.keras.Sequential([
+    tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
+    pool1,
+    tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    pool2,
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(10, activation='softmax')
+])`,
+                'Keras Dropout': `# Keras Dropout layer
+import tensorflow as tf
+
+# Dropout examples
+dropout1 = tf.keras.layers.Dropout(0.2)  # 20% dropout
+dropout2 = tf.keras.layers.Dropout(0.5)  # 50% dropout
+
+# Usage in model
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(128, activation='relu', input_shape=(10,)),
+    dropout1,
+    tf.keras.layers.Dense(64, activation='relu'),
+    dropout2,
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+
+# Note: Dropout is only active during training`,
+                'Keras Flatten': `# Keras Flatten layer
+import tensorflow as tf
+
+# Flatten layer
+flatten = tf.keras.layers.Flatten()
+
+# Usage in CNN
+model = tf.keras.Sequential([
+    tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
+    tf.keras.layers.MaxPooling2D((2, 2)),
+    tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    tf.keras.layers.MaxPooling2D((2, 2)),
+    flatten,  # Converts 3D to 1D
+    tf.keras.layers.Dense(64, activation='relu'),
+    tf.keras.layers.Dense(10, activation='softmax')
+])`,
+                'Keras Activation': `# Keras Activation layer
+import tensorflow as tf
+
+# Activation layer examples
+act1 = tf.keras.layers.Activation('relu')
+act2 = tf.keras.layers.Activation('sigmoid')
+act3 = tf.keras.layers.Activation('softmax')
+act4 = tf.keras.layers.Activation(tf.nn.leaky_relu)
+
+# Usage in model
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64),
+    act1,
+    tf.keras.layers.Dense(10),
+    act3
+])
+
+# Alternative: specify activation in Dense layer
+# tf.keras.layers.Dense(64, activation='relu')`,
+                'Keras Optimizer': `# Keras Optimizer
+import tensorflow as tf
+
+# Common optimizers
+adam = tf.keras.optimizers.Adam(learning_rate=0.001)
+sgd = tf.keras.optimizers.SGD(learning_rate=0.01, momentum=0.9)
+rmsprop = tf.keras.optimizers.RMSprop(learning_rate=0.001)
+
+# Usage in model compilation
+model.compile(
+    optimizer=adam,
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+# Custom optimizer configuration
+custom_adam = tf.keras.optimizers.Adam(
+    learning_rate=0.001,
+    beta_1=0.9,
+    beta_2=0.999,
+    epsilon=1e-07
+)`,
+                'Keras Loss': `# Keras Loss function
+import tensorflow as tf
+
+# Common loss functions
+binary_crossentropy = tf.keras.losses.BinaryCrossentropy()
+categorical_crossentropy = tf.keras.losses.CategoricalCrossentropy()
+sparse_categorical_crossentropy = tf.keras.losses.SparseCategoricalCrossentropy()
+mse = tf.keras.losses.MeanSquaredError()
+mae = tf.keras.losses.MeanAbsoluteError()
+
+# Usage in model compilation
+model.compile(
+    optimizer='adam',
+    loss=sparse_categorical_crossentropy,
+    metrics=['accuracy']
+)
+
+# Custom loss function
+def custom_loss(y_true, y_pred):
+    return tf.reduce_mean(tf.square(y_true - y_pred))`,
+                'Matplotlib Line': `# Line plot
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+plt.figure(figsize=(10, 6))
+plt.plot(x, y, 'b-', linewidth=2, label='sin(x)')
+plt.title('Sine Wave', fontsize=16)
+plt.xlabel('X', fontsize=12)
+plt.ylabel('Y', fontsize=12)
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.show()`,
+                'Matplotlib Scatter': `# Scatter plot
+import matplotlib.pyplot as plt
+import numpy as np
+
+np.random.seed(42)
+x = np.random.randn(100)
+y = 2 * x + np.random.randn(100)
+
+plt.figure(figsize=(10, 6))
+plt.scatter(x, y, alpha=0.7, c='red', s=50)
+plt.title('Scatter Plot', fontsize=16)
+plt.xlabel('X', fontsize=12)
+plt.ylabel('Y', fontsize=12)
+plt.grid(True, alpha=0.3)
+plt.show()`,
+                'Matplotlib Bar': `# Bar chart
+import matplotlib.pyplot as plt
+
+categories = ['A', 'B', 'C', 'D']
+values = [23, 45, 56, 78]
+
+plt.figure(figsize=(10, 6))
+bars = plt.bar(categories, values, color=['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'])
+plt.title('Bar Chart', fontsize=16)
+plt.xlabel('Categories', fontsize=12)
+plt.ylabel('Values', fontsize=12)
+
+# Add value labels
+for bar in bars:
+    height = bar.get_height()
+    plt.text(bar.get_x() + bar.get_width()/2., height,
+             f'{height}', ha='center', va='bottom')
+
+plt.show()`,
+                'Matplotlib Histogram': `# Histogram
+import matplotlib.pyplot as plt
+import numpy as np
+
+np.random.seed(42)
+data = np.random.normal(100, 15, 1000)
+
+plt.figure(figsize=(10, 6))
+plt.hist(data, bins=30, alpha=0.7, color='skyblue', edgecolor='black')
+plt.title('Histogram', fontsize=16)
+plt.xlabel('Values', fontsize=12)
+plt.ylabel('Frequency', fontsize=12)
+plt.grid(True, alpha=0.3)
+plt.show()`,
+                'Matplotlib Subplots': `# Subplots
+import matplotlib.pyplot as plt
+import numpy as np
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+x = np.linspace(0, 10, 100)
+axes[0,0].plot(x, np.sin(x))
+axes[0,0].set_title('Sine')
+
+axes[0,1].plot(x, np.cos(x))
+axes[0,1].set_title('Cosine')
+
+axes[1,0].plot(x, np.tan(x))
+axes[1,0].set_title('Tangent')
+axes[1,0].set_ylim(-5, 5)
+
+axes[1,1].plot(x, np.exp(-x))
+axes[1,1].set_title('Exponential Decay')
+
+plt.tight_layout()
+plt.show()`,
+                'Matplotlib Legend': `# Legend
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.linspace(0, 10, 100)
+y1 = np.sin(x)
+y2 = np.cos(x)
+
+plt.figure(figsize=(10, 6))
+plt.plot(x, y1, 'b-', label='sin(x)')
+plt.plot(x, y2, 'r--', label='cos(x)')
+plt.title('Trigonometric Functions', fontsize=16)
+plt.xlabel('X', fontsize=12)
+plt.ylabel('Y', fontsize=12)
+plt.legend(loc='upper right', frameon=True, shadow=True)
+plt.grid(True, alpha=0.3)
+plt.show()`,
+                'Matplotlib Grid': `# Grid
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+plt.figure(figsize=(10, 6))
+plt.plot(x, y, 'b-', linewidth=2)
+plt.title('Sine Wave with Grid', fontsize=16)
+plt.xlabel('X', fontsize=12)
+plt.ylabel('Y', fontsize=12)
+
+# Custom grid
+plt.grid(True, which='major', linestyle='-', alpha=0.7)
+plt.grid(True, which='minor', linestyle=':', alpha=0.4)
+plt.minorticks_on()
+
+plt.show()`,
+                'Matplotlib Labels': `# Axis labels
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.linspace(0, 10, 100)
+y = x**2
+
+plt.figure(figsize=(10, 6))
+plt.plot(x, y, 'g-', linewidth=2)
+plt.title('Quadratic Function', fontsize=16, fontweight='bold')
+plt.xlabel('X Values', fontsize=14, fontweight='bold')
+plt.ylabel('Y = X²', fontsize=14, fontweight='bold')
+plt.tick_params(axis='both', which='major', labelsize=12)
+plt.grid(True, alpha=0.3)
+plt.show()`,
+                'Matplotlib Title': `# Title customization
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.linspace(0, 2*np.pi, 100)
+y = np.sin(x)
+
+plt.figure(figsize=(12, 6))
+plt.plot(x, y, 'purple', linewidth=3)
+plt.title('Sine Wave: y = sin(x)', 
+          fontsize=20, 
+          fontweight='bold', 
+          pad=20,
+          color='darkblue')
+plt.xlabel('x (radians)', fontsize=14)
+plt.ylabel('sin(x)', fontsize=14)
+plt.grid(True, alpha=0.3)
+plt.show()`,
+                'Matplotlib Save': `# Save figure
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+plt.figure(figsize=(10, 6))
+plt.plot(x, y, 'b-', linewidth=2)
+plt.title('Sine Wave', fontsize=16)
+plt.xlabel('X', fontsize=12)
+plt.ylabel('Y', fontsize=12)
+plt.grid(True, alpha=0.3)
+
+# Save with high quality
+plt.savefig('sine_wave.png', dpi=300, bbox_inches='tight')
+plt.savefig('sine_wave.pdf', bbox_inches='tight')
+plt.show()`
+            };
+
+            code = codeMap[itemName] || `# ${itemName}\nprint("Code example for ${itemName}")`;
+            document.getElementById('code-content').textContent = code;
+        }
+
+        // Search in dictionary
+        function searchDictionary() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const resultsContainer = document.getElementById('search-results');
+            
+            // Clear previous results
+            resultsContainer.innerHTML = '';
+            
+            if (!searchTerm.trim()) {
+                resultsContainer.innerHTML = '<div class="dictionary-item">Please enter a search term</div>';
+                return;
+            }
+
+            // Get all possible items
+            const allItems = [];
+            const categoryMap = {
+                '00 Important Functions': [
+                    'Print Function', 'Input Function', 'Len Function', 'Range Function',
+                    'Zip Function', 'Enumerate Function', 'Map Function', 'Filter Function',
+                    'Reduce Function', 'Lambda Function'
+                ],
+                '01 Numpy': [
+                    'Numpy Array', 'Numpy Zeros', 'Numpy Ones', 'Numpy Arange',
+                    'Numpy Linspace', 'Numpy Reshape', 'Numpy Concatenate', 'Numpy Stack',
+                    'Numpy Split', 'Numpy Mean'
+                ],
+                '02 Pandas': [
+                    'Pandas DataFrame', 'Pandas Series', 'Pandas Read CSV', 'Pandas Read Excel',
+                    'Pandas Head', 'Pandas Tail', 'Pandas Info', 'Pandas Describe',
+                    'Pandas Drop', 'Pandas Fillna'
+                ],
+                '03 Matplotlib': [
+                    'Matplotlib Line', 'Matplotlib Scatter', 'Matplotlib Bar', 'Matplotlib Histogram',
+                    'Matplotlib Subplots', 'Matplotlib Legend', 'Matplotlib Grid', 'Matplotlib Labels',
+                    'Matplotlib Title', 'Matplotlib Save'
+                ],
+                '04 Sklearn Preprocessing': [
+                    'Sklearn StandardScaler', 'Sklearn MinMaxScaler', 'Sklearn RobustScaler',
+                    'Sklearn LabelEncoder', 'Sklearn OneHotEncoder', 'Sklearn Imputer',
+                    'Sklearn PolynomialFeatures', 'Sklearn Binarizer', 'Sklearn KBinsDiscretizer',
+                    'Sklearn Normalizer'
+                ],
+                '05 Sklearn Features': [
+                    'Sklearn SelectKBest', 'Sklearn SelectPercentile', 'Sklearn RFE',
+                    'Sklearn PCA', 'Sklearn LDA', 'Sklearn VarianceThreshold',
+                    'Sklearn MutualInfoClassif', 'Sklearn GenericUnivariateSelect',
+                    'Sklearn SelectFromModel', 'Sklearn RFECV'
+                ],
+                '06 Sklearn Models': [
+                    'Sklearn LinearRegression', 'Sklearn LogisticRegression', 'Sklearn SVM',
+                    'Sklearn DecisionTree', 'Sklearn RandomForest', 'Sklearn GradientBoosting',
+                    'Sklearn KNN', 'Sklearn NaiveBayes', 'Sklearn MLP', 'Sklearn KMeans'
+                ],
+                '07 Sklearn Check': [
+                    'Sklearn AccuracyScore', 'Sklearn PrecisionScore', 'Sklearn RecallScore',
+                    'Sklearn F1Score', 'Sklearn ConfusionMatrix', 'Sklearn ClassificationReport',
+                    'Sklearn ROC_AUC_Score', 'Sklearn MeanSquaredError', 'Sklearn MeanAbsoluteError',
+                    'Sklearn R2Score'
+                ],
+                '08 Seaborn': [
+                    'Seaborn Heatmap', 'Seaborn Pairplot', 'Seaborn Distplot', 'Seaborn Boxplot',
+                    'Seaborn Violinplot', 'Seaborn Scatterplot', 'Seaborn Lineplot', 'Seaborn Barplot',
+                    'Seaborn Countplot', 'Seaborn Jointplot'
+                ],
+                '09 TensorFlow Tools': [
+                    'TensorFlow Constants', 'TensorFlow Variables', 'TensorFlow Placeholders',
+                    'TensorFlow Operations', 'TensorFlow Sessions', 'TensorFlow Graphs',
+                    'TensorFlow Optimizers', 'TensorFlow Losses', 'TensorFlow Metrics',
+                    'TensorFlow Callbacks'
+                ],
+                '10 TensorFlow Models': [
+                    'TensorFlow Sequential', 'TensorFlow Functional', 'TensorFlow Custom',
+                    'TensorFlow Linear', 'TensorFlow DNN', 'TensorFlow CNN',
+                    'TensorFlow RNN', 'TensorFlow LSTM', 'TensorFlow GRU', 'TensorFlow Autoencoder'
+                ],
+                '11 Keras': [
+                    'Keras Sequential', 'Keras Functional', 'Keras Dense', 'Keras Conv2D',
+                    'Keras MaxPooling2D', 'Keras Dropout', 'Keras Flatten', 'Keras Activation',
+                    'Keras Optimizer', 'Keras Loss'
+                ]
+            };
+
+            Object.values(categoryMap).forEach(items => {
+                allItems.push(...items);
+            });
+
+            // Filter results
+            const filteredResults = allItems.filter(item => 
+                item.toLowerCase().includes(searchTerm)
+            );
+
+            // Display results
+            if (filteredResults.length > 0) {
+                filteredResults.slice(0, 20).forEach(result => {
+                    const div = document.createElement('div');
+                    div.className = 'dictionary-item';
+                    div.textContent = result;
+                    div.onclick = () => loadDictionaryCode(result);
+                    resultsContainer.appendChild(div);
+                });
+            } else {
+                const div = document.createElement('div');
+                div.className = 'dictionary-item';
+                div.textContent = 'No results found';
+                resultsContainer.appendChild(div);
+            }
+        }
+
+        // Load project
+        function loadProject(projectName) {
+            let code = '';
+            switch(projectName) {
+                case 'project1':
+                    code = `# Project 1: Iris Classification with ML Pipeline
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load and explore data
+iris = load_iris()
+X, y = iris.data, iris.target
+feature_names = iris.feature_names
+target_names = iris.target_names
+
+print("Dataset shape:", X.shape)
+print("Feature names:", feature_names)
+print("Target names:", target_names)
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# Scale features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Train model
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train_scaled, y_train)
+
+# Cross-validation
+cv_scores = cross_val_score(model, X_train_scaled, y_train, cv=5)
+print(f"\nCross-validation scores: {cv_scores}")
+print(f"Mean CV accuracy: {cv_scores.mean():.4f} (+/- {cv_scores.std() * 2:.4f})")
+
+# Predictions
+y_pred = model.predict(X_test_scaled)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"\nTest accuracy: {accuracy:.4f}")
+
+# Classification report
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=target_names))
+
+# Confusion matrix
+plt.figure(figsize=(8, 6))
+cm = confusion_matrix(y_test, y_pred)
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+            xticklabels=target_names, yticklabels=target_names)
+plt.title('Confusion Matrix')
+plt.ylabel('Actual')
+plt.xlabel('Predicted')
+plt.show()`;
+                    break;
+                case 'project2':
+                    code = `# Project 2: California Housing Price Prediction
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load data (using California Housing instead of deprecated Boston)
+housing = fetch_california_housing()
+X, y = housing.data, housing.target
+feature_names = housing.feature_names
+
+print("Dataset shape:", X.shape)
+print("Feature names:", feature_names)
+print("Target range:", y.min(), "to", y.max())
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Scale features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Train model
+model = RandomForestRegressor(n_estimators=100, random_state=42)
+model.fit(X_train_scaled, y_train)
+
+# Cross-validation
+cv_scores = cross_val_score(model, X_train_scaled, y_train, cv=5, scoring='r2')
+print(f"\nCross-validation R² scores: {cv_scores}")
+print(f"Mean CV R²: {cv_scores.mean():.4f} (+/- {cv_scores.std() * 2:.4f})")
+
+# Predictions
+y_pred = model.predict(X_test_scaled)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print(f"\nTest MSE: {mse:.4f}")
+print(f"Test R²: {r2:.4f}")
+print(f"Test RMSE: {np.sqrt(mse):.4f}")
+
+# Feature importance
+feature_importance = model.feature_importances_
+sorted_idx = np.argsort(feature_importance)[::-1]
+
+plt.figure(figsize=(10, 6))
+plt.bar(range(len(feature_importance)), feature_importance[sorted_idx])
+plt.xticks(range(len(feature_importance)), 
+           [feature_names[i] for i in sorted_idx], rotation=45)
+plt.title('Feature Importance')
+plt.tight_layout()
+plt.show()
+
+# Actual vs Predicted
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred, alpha=0.7)
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+plt.xlabel('Actual Prices')
+plt.ylabel('Predicted Prices')
+plt.title('Actual vs Predicted Housing Prices')
+plt.show()`;
+                    break;
+                case 'project3':
+                    code = `# Project 3: Handwritten Digit Recognition with CNN
+import tensorflow as tf
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load data
+digits = load_digits()
+X, y = digits.data, digits.target
+
+print("Dataset shape:", X.shape)
+print("Number of classes:", len(np.unique(y)))
+print("Image shape:", (8, 8))
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# Scale features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Reshape for neural network (flatten is already done, but we can use as is)
+X_train_nn = X_train_scaled
+X_test_nn = X_test_scaled
+
+# Build neural network
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(128, activation='relu', input_shape=(64,)),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(64, activation='relu'),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(10, activation='softmax')
+])
+
+# Compile model
+model.compile(
+    optimizer='adam',
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+# Train model
+history = model.fit(
+    X_train_nn, y_train,
+    validation_split=0.2,
+    epochs=50,
+    batch_size=32,
+    verbose=0
+)
+
+# Evaluate model
+test_loss, test_accuracy = model.evaluate(X_test_nn, y_test, verbose=0)
+print(f"\nTest accuracy: {test_accuracy:.4f}")
+
+# Plot training history
+plt.figure(figsize=(12, 4))
+
+plt.subplot(1, 2, 1)
+plt.plot(history.history['accuracy'], label='Training Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.title('Model Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'], label='Training Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.title('Model Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+
+plt.tight_layout()
+plt.show()
+
+# Make predictions
+y_pred = model.predict(X_test_nn)
+y_pred_classes = np.argmax(y_pred, axis=1)
+
+# Show some predictions
+fig, axes = plt.subplots(2, 5, figsize=(12, 6))
+for i in range(10):
+    ax = axes[i//5, i%5]
+    ax.imshow(X_test[i].reshape(8, 8), cmap='gray')
+    ax.set_title(f'True: {y_test[i]}, Pred: {y_pred_classes[i]}')
+    ax.axis('off')
+plt.tight_layout()
+plt.show()`;
+                    break;
+                case 'project4':
+                    code = `# Project 4: Wine Quality Classification
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+# Load data
+wine = load_wine()
+X, y = wine.data, wine.target
+feature_names = wine.feature_names
+target_names = wine.target_names
+
+print("Dataset shape:", X.shape)
+print("Number of classes:", len(target_names))
+print("Class distribution:", np.bincount(y))
+print("Features:", feature_names)
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# Scale features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Train Random Forest with hyperparameter tuning
+rf_param_grid = {
+    'n_estimators': [50, 100, 200],
+    'max_depth': [3, 5, 7, None],
+    'min_samples_split': [2, 5, 10]
+}
+
+rf_grid = GridSearchCV(
+    RandomForestClassifier(random_state=42),
+    rf_param_grid,
+    cv=5,
+    scoring='accuracy',
+    n_jobs=-1
+)
+
+rf_grid.fit(X_train_scaled, y_train)
+best_rf = rf_grid.best_estimator_
+
+print(f"\nBest Random Forest parameters: {rf_grid.best_params_}")
+print(f"Best CV score: {rf_grid.best_score_:.4f}")
+
+# Train SVM with hyperparameter tuning
+svm_param_grid = {
+    'C': [0.1, 1, 10, 100],
+    'gamma': ['scale', 'auto', 0.001, 0.01, 0.1, 1],
+    'kernel': ['rbf', 'linear']
+}
+
+svm_grid = GridSearchCV(
+    SVC(random_state=42),
+    svm_param_grid,
+    cv=5,
+    scoring='accuracy',
+    n_jobs=-1
+)
+
+svm_grid.fit(X_train_scaled, y_train)
+best_svm = svm_grid.best_estimator_
+
+print(f"\nBest SVM parameters: {svm_grid.best_params_}")
+print(f"Best CV score: {svm_grid.best_score_:.4f}")
+
+# Compare models on test set
+rf_pred = best_rf.predict(X_test_scaled)
+svm_pred = best_svm.predict(X_test_scaled)
+
+rf_accuracy = accuracy_score(y_test, rf_pred)
+svm_accuracy = accuracy_score(y_test, svm_pred)
+
+print(f"\nRandom Forest Test Accuracy: {rf_accuracy:.4f}")
+print(f"SVM Test Accuracy: {svm_accuracy:.4f}")
+
+# Detailed report for best model
+best_model = best_rf if rf_accuracy > svm_accuracy else best_svm
+best_pred = rf_pred if rf_accuracy > svm_accuracy else svm_pred
+best_name = "Random Forest" if rf_accuracy > svm_accuracy else "SVM"
+
+print(f"\n{best_name} Classification Report:")
+print(classification_report(y_test, best_pred, target_names=target_names))
+
+# Confusion matrix
+plt.figure(figsize=(8, 6))
+cm = confusion_matrix(y_test, best_pred)
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+            xticklabels=target_names, yticklabels=target_names)
+plt.title(f'{best_name} Confusion Matrix')
+plt.ylabel('Actual')
+plt.xlabel('Predicted')
+plt.show()
+
+# Feature importance (for Random Forest)
+if best_name == "Random Forest":
+    feature_importance = best_rf.feature_importances_
+    sorted_idx = np.argsort(feature_importance)[::-1][:10]  # Top 10
+    
+    plt.figure(figsize=(10, 6))
+    plt.bar(range(len(sorted_idx)), feature_importance[sorted_idx])
+    plt.xticks(range(len(sorted_idx)), 
+               [feature_names[i] for i in sorted_idx], rotation=45)
+    plt.title('Top 10 Feature Importance')
+    plt.tight_layout()
+    plt.show()`;
+                    break;
+                default:
+                    code = `# Default project template
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+import pandas as pd
+
+# Load your data
+# df = pd.read_csv('your_data.csv')
+# X = df.drop('target', axis=1)
+# y = df['target']
+
+# Split data
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train your model
+# model = YourModel()
+# model.fit(X_train, y_train)
+
+# Predict and evaluate
+# y_pred = model.predict(X_test)
+# accuracy = accuracy_score(y_test, y_pred)
+# print(f"Accuracy: {accuracy:.4f}")`;
+            }
+            document.getElementById('code-content').textContent = code;
+        }
+
+        // Generate metric code
+        function generateMetric(metricType) {
+            let code = '';
+            switch(metricType) {
+                case 'mae':
+                    code = `# Import Libraries
+from sklearn.metrics import mean_absolute_error
+
+# Calculate Mean Absolute Error
+mae = mean_absolute_error(y_true, y_pred)
+print(f'Mean Absolute Error: {mae:.4f}')`;
+                    break;
+                case 'mse':
+                    code = `# Import Libraries
+from sklearn.metrics import mean_squared_error
+
+# Calculate Mean Squared Error
+mse = mean_squared_error(y_true, y_pred)
+print(f'Mean Squared Error: {mse:.4f}')
+
+# Calculate Root Mean Squared Error
+rmse = np.sqrt(mse)
+print(f'Root Mean Squared Error: {rmse:.4f}')`;
+                    break;
+                case 'medae':
+                    code = `# Import Libraries
+from sklearn.metrics import median_absolute_error
+
+# Calculate Median Absolute Error
+medae = median_absolute_error(y_true, y_pred)
+print(f'Median Absolute Error: {medae:.4f}')`;
+                    break;
+                case 'confusion_matrix':
+                    code = `# Import Libraries
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create confusion matrix
+cm = confusion_matrix(y_true, y_pred)
+
+# Plot confusion matrix
+plt.figure(figsize=(8, 6))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+plt.title('Confusion Matrix')
+plt.ylabel('Actual')
+plt.xlabel('Predicted')
+plt.show()`;
+                    break;
+                default:
+                    code = `# Import Libraries
+from sklearn.metrics import mean_absolute_error
+
+# Calculate Mean Absolute Error
+mae = mean_absolute_error(y_true, y_pred)
+print(f'Mean Absolute Error: {mae:.4f}')`;
+            }
+            document.getElementById('code-content').textContent = code;
+        }
+
+        // Generate validation code
+        function generateValidation(validationType) {
+            let code = '';
+            switch(validationType) {
+                case 'cross_validate':
+                    code = `# Import Libraries
+from sklearn.model_selection import cross_validate
+from sklearn.ensemble import RandomForestClassifier
+
+# Perform cross-validation
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+cv_results = cross_validate(model, X, y, cv=5, 
+                           scoring=['accuracy', 'precision_macro', 'recall_macro', 'f1_macro'])
+
+# Print results
+print("Cross-validation results:")
+for metric, scores in cv_results.items():
+    if metric.startswith('test_'):
+        print(f"{metric}: {scores.mean():.4f} (+/- {scores.std() * 2:.4f})")`;
+                    break;
+                case 'cross_validate_predict':
+                    code = `# Import Libraries
+from sklearn.model_selection import cross_val_predict
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report
+
+# Get cross-validated predictions
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+y_pred = cross_val_predict(model, X, y, cv=5)
+
+# Generate classification report
+print("Cross-validated classification report:")
+print(classification_report(y, y_pred))`;
+                    break;
+                default:
+                    code = `# Import Libraries
+from sklearn.model_selection import cross_validate
+from sklearn.ensemble import RandomForestClassifier
+
+# Perform cross-validation
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+cv_results = cross_validate(model, X, y, cv=5, 
+                           scoring=['accuracy', 'precision_macro', 'recall_macro', 'f1_macro'])
+
+# Print results
+print("Cross-validation results:")
+for metric, scores in cv_results.items():
+    if metric.startswith('test_'):
+        print(f"{metric}: {scores.mean():.4f} (+/- {scores.std() * 2:.4f})")`;
+            }
+            document.getElementById('code-content').textContent = code;
+        }
+
+        // Generate GUI code
+        function generateGui(guiType) {
+            let code = '';
+            switch(guiType) {
+                case 'basic':
+                    code = `# Import Libraries
+import tkinter as tk
+
+# Create main window
+root = tk.Tk()
+root.title("ML Helper GUI")
+root.geometry("400x300")
+root.resizable(True, True)
+
+# Add a label
+label = tk.Label(root, text="Welcome to ML Helper!", font=("Arial", 14))
+label.pack(pady=20)
+
+# Run the application
+root.mainloop()`;
+                    break;
+                case 'buttons':
+                    code = `# Import Libraries
+import tkinter as tk
+from tkinter import messagebox
+
+def on_button_click():
+    messagebox.showinfo("Info", "Button clicked successfully!")
+
+# Create main window
+root = tk.Tk()
+root.title("Button Example")
+root.geometry("300x150")
+
+# Create button
+button = tk.Button(
+    root, 
+    text="Click Me!", 
+    command=on_button_click,
+    bg="#4CAF50",
+    fg="white",
+    font=("Arial", 12),
+    padx=10,
+    pady=5
+)
+button.pack(expand=True)
+
+# Run the application
+root.mainloop()`;
+                    break;
+                case 'labels':
+                    code = `# Import Libraries
+import tkinter as tk
+
+# Create main window
+root = tk.Tk()
+root.title("Label Example")
+root.geometry("400x200")
+
+# Create styled label
+label = tk.Label(
+    root,
+    text="This is a styled label",
+    font=("Helvetica", 16, "bold"),
+    fg="#2c3e50",
+    bg="#ecf0f1",
+    padx=20,
+    pady=10,
+    relief="raised",
+    bd=2
+)
+label.pack(expand=True)
+
+# Run the application
+root.mainloop()`;
+                    break;
+                case 'entry':
+                    code = `# Import Libraries
+import tkinter as tk
+from tkinter import messagebox
+
+def get_entry_text():
+    user_input = entry.get()
+    if user_input:
+        messagebox.showinfo("Input", f"You entered: {user_input}")
+    else:
+        messagebox.showwarning("Warning", "Please enter some text!")
+
+# Create main window
+root = tk.Tk()
+root.title("Entry Field Example")
+root.geometry("350x150")
+
+# Create entry field
+entry = tk.Entry(
+    root,
+    width=30,
+    font=("Arial", 12),
+    justify="center"
+)
+entry.pack(pady=20)
+
+# Create button
+button = tk.Button(
+    root,
+    text="Get Text",
+    command=get_entry_text,
+    bg="#3498db",
+    fg="white",
+    font=("Arial", 10),
+    padx=10
+)
+button.pack()
+
+# Run the application
+root.mainloop()`;
+                    break;
+                default:
+                    code = `# Import Libraries
+import tkinter as tk
+
+# Create main window
+root = tk.Tk()
+root.title("ML Helper GUI")
+root.geometry("400x300")
+root.resizable(True, True)
+
+# Add a label
+label = tk.Label(root, text="Welcome to ML Helper!", font=("Arial", 14))
+label.pack(pady=20)
+
+# Run the application
+root.mainloop()`;
+            }
+            document.getElementById('code-content').textContent = code;
+        }
+
+        // Copy code to clipboard
+        function copyCode() {
+            const codeElement = document.getElementById('code-content');
+            if (!codeElement.textContent.trim()) {
+                alert('No code to copy!');
+                return;
+            }
+            
+            const textArea = document.createElement('textarea');
+            textArea.value = codeElement.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            // Show notification
+            const notification = document.getElementById('notification');
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 2000);
+        }
+
+        // Delete code
+        function deleteCode() {
+            document.getElementById('code-content').textContent = '';
+        }
+
+        // Show about
+        function showAbout() {
+            alert('Machine Learning Helper v1.0\n\nThis tool helps generate Python code for machine learning tasks.\n\nMade by Majd Eleyan' 
+                  );
+        }
+
+        // Exit app
+        function exitApp() {
+            if (confirm('Are you sure you want to leave?')) {
+                window.close();
+            }
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial code content
+            document.getElementById('code-content').textContent = '# Welcome to Machine Learning Helper!\n# Select a category from the sidebar to generate code.';
+            
+            // Load initial dictionary items
+            loadDictionaryItems('03 Matplotlib');
+            
+            // Fix active tab styling
+            document.querySelector('.tab-container .tab').classList.add('active');
+            document.querySelector('.tab-subcontainer .tab').classList.add('active');
+        });
+    </script>
+</body>
+</html>
