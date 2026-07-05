@@ -3,7 +3,7 @@ ML-Helper
 Machine Learning Helper (Web and mobile Edition )
 
 
-هو تطبيق ويب وله [نسخة موبايل ](https://www.mediafire.com/file/1x2zizj5uht3efz/app3764191-dtislj.apk/file) تفاعلي يُولّد لك أكواد Python جاهزة لمهام تعلّم الآلة والذكاء الاصطناعي، من تحميل البيانات وتحضيرها، إلى بناء النماذج (Classification, Regression, Clustering)، وتقييم الأداء، أو بناء نماذج عميقة باستخدام 
+هو تطبيق [ويب](https://majd-eleyan.github.io/ML-Helper/) وله [نسخة موبايل ](https://www.mediafire.com/file/60q1keywf4uu7ga/base.apk/file) تفاعلي يُولّد لك أكواد Python جاهزة لمهام تعلّم الآلة والذكاء الاصطناعي، من تحميل البيانات وتحضيرها، إلى بناء النماذج (Classification, Regression, Clustering)، وتقييم الأداء، أو بناء نماذج عميقة باستخدام 
 
 TensorFlow
 
@@ -32,6 +32,7 @@ scikit-learn TensorFlow / Keras pandas, numpy, matplotlib, seaborn أقسام م
 
 افتح الملف index.html مباشرة في متصفحك (لا حاجة لخادم). اختر القسم الذي تحتاجه من الشريط الجانبي (مثل: TensorFlow، Tkinter، Classification...). انقر على الزر المناسب لتوليد الكود. انسخ الكود واستخدمه في مشروعك
 
+للتجربة من الموقع [إضغط هنا](https://majd-eleyan.github.io/ML-Helper/) 
 لتحميل نسخة تطبيق الموبايل [إضغط هنا](https://www.mediafire.com/file/1x2zizj5uht3efz/app3764191-dtislj.apk/file) 
 
 بُني بحب لتسهيل رحلتك في عالم تعلم الآلة.
